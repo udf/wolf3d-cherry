@@ -39,8 +39,6 @@ void Controller::process_input(uint32_t elapsed_ms) {
 }
 
 void Controller::run() {
-    std::cout << "H" << std::endl;
-
     uint32_t prev_ms = SDL_GetTicks();
     while (running) {
         uint32_t elapsed_ms = SDL_GetTicks() - prev_ms;
