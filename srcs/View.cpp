@@ -32,3 +32,7 @@ View::~View() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+
+void View::draw(const Model &model) {
+    (void)model;
+}

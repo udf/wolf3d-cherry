@@ -1,6 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <cstdint>
+
+#include <SDL2/SDL.h>
 
 #include "Model.hpp"
 #include "View.hpp"
@@ -10,8 +13,12 @@ class Controller {
     Controller(const Controller &other) = delete;
     Controller &operator=(const Controller &other) = delete;
 
+    void process_input(uint32_t elapsed_ms);
+
     View view;
     Model model;
+
+    bool running = true;
 
   public:
     Controller();

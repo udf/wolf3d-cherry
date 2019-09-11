@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "Model.hpp"
+
 class View {
   private:
     View(const View &other) = delete;
@@ -19,4 +21,6 @@ class View {
   public:
     View();
     ~View();
+
+    void draw(const Model &model);
 };

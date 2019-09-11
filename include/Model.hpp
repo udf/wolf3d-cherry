@@ -3,6 +3,9 @@
 #include "Point.hpp"
 
 struct Model {
+    Model() {
+    }
+
     // TODO: check if fixed point is faster on pi
     using Coord = Point<float>;
 
