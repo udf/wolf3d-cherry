@@ -17,7 +17,7 @@ HEADER_EXT=hpp
 SRC_EXT=cpp
 
 CXX=clang++
-CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g
+CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -lSDL2 -g
 LIB_FLAGS=
 
 # Paths (with trailing /)
