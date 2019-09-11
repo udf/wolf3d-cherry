@@ -32,7 +32,7 @@ FILESTEMS=View Controller
 SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) Model Point
+INCLUDE_FILES=$(FILESTEMS) Model Point SDLExcept
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))

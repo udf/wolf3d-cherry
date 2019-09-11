@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 #include "Model.hpp"
+#include "SDLExcept.hpp"
 
 class View {
   private:
