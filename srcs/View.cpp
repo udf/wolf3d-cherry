@@ -1,6 +1,10 @@
 #include "View.hpp"
 
 View::View() {
+    if (SDL_Init(SDL_INIT_VIDEO)) {
+        throw std::runtime_error("Failed to initialize SDL video subsystem");
+    }
+
     window = SDL_CreateWindow(
         "wolf3d",
         SDL_WINDOWPOS_CENTERED,
@@ -26,4 +30,5 @@ View::View() {
 View::~View() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_Quit();
 }
