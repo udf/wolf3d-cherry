@@ -9,8 +9,8 @@ View::View() {
         "wolf3d",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        width,
-        height,
+        static_cast<int>(width),
+        static_cast<int>(height),
         SDL_WINDOW_SHOWN
     );
     if (!window) {
@@ -30,8 +30,8 @@ View::View() {
         renderer,
         SDL_PIXELFORMAT_ARGB32,
         SDL_TEXTUREACCESS_STREAMING,
-        width,
-        height
+        static_cast<int>(width),
+        static_cast<int>(height)
     );
 }
 
