@@ -10,8 +10,8 @@ class View {
     View(const View &other) = delete;
     View &operator=(const View &other) = delete;
 
-    int32_t width = 640;
-    int32_t height = 480;
+    int32_t width = 1366;
+    int32_t height = 768;
 
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
