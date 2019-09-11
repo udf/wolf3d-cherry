@@ -17,6 +17,7 @@ class View {
 
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
+    SDL_Texture *buffer = nullptr;
 
   public:
     View();

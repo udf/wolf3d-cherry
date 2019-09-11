@@ -25,9 +25,18 @@ View::View() {
     if (!renderer) {
         throw std::runtime_error("Failed to create renderer");
     }
+
+    buffer = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_ARGB32,
+        SDL_TEXTUREACCESS_STREAMING,
+        width,
+        height
+    );
 }
 
 View::~View() {
+    SDL_DestroyTexture(buffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
