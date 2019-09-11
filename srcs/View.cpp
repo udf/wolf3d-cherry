@@ -1,5 +1,9 @@
 #include "View.hpp"
 
+uint32_t *texel(uint32_t *pixels, size_t width, size_t x, size_t y) {
+    return &pixels[y * width + x];
+}
+
 View::View() {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         throw std::runtime_error("Failed to initialize SDL video subsystem");
@@ -33,6 +37,18 @@ View::View() {
         static_cast<int>(width),
         static_cast<int>(height)
     );
+
+    background_pixels = std::make_unique<uint32_t[]>(width * height);
+    for (size_t x = 0; x < width; x++) {
+        for (size_t y = 0; y < height; y++) {
+            auto p = texel(background_pixels.get(), width, x, y);
+            if ((x % 2 == 0) ^ (y % 2 == 0)) {
+                *p = 0;
+            } else {
+                *p = 0xFFFFFF00;
+            }
+        }
+    }
 }
 
 View::~View() {
@@ -44,4 +60,27 @@ View::~View() {
 
 void View::draw(const Model &model) {
     (void)model;
+
+    uint32_t *pixels;
+    int pitch;
+
+    SDL_LockTexture(
+        buffer,
+        NULL,
+        reinterpret_cast<void **>(&pixels),
+        &pitch
+    );
+
+    // Copy background pixels to texture
+    std::memcpy(
+        static_cast<void *>(pixels),
+        static_cast<void *>(background_pixels.get()),
+        sizeof(uint32_t) * width * height
+    );
+
+    // TODO: draw player
+
+    SDL_UnlockTexture(buffer);
+    SDL_RenderCopy(renderer, buffer, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }

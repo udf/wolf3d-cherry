@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <cstring>
+#include <memory>
 
 #include <SDL2/SDL.h>
 
@@ -18,6 +20,8 @@ class View {
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *buffer = nullptr;
+
+    std::unique_ptr<uint32_t[]> background_pixels;
 
   public:
     View();
