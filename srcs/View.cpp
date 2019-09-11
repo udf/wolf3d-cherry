@@ -59,8 +59,6 @@ View::~View() {
 }
 
 void View::draw(const Model &model) {
-    (void)model;
-
     uint32_t *pixels;
     int pitch;
 
