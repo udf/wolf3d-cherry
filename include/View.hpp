@@ -9,7 +9,7 @@
 
 #include "Model.hpp"
 #include "texture_store.hpp"
-#include "SDLExcept.hpp"
+#include "exception.hpp"
 
 class View {
   private:

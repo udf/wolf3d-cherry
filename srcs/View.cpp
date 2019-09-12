@@ -6,7 +6,8 @@ uint32_t *texel(uint32_t *pixels, size_t width, size_t x, size_t y) {
 
 View::View() {
     if (SDL_Init(SDL_INIT_VIDEO)) {
-        throw SDLExcept("Failed to initialize SDL video subsystem");
+        throw Exception("Failed to initialize SDL video subsystem")
+            .set_hint(SDL_GetError());
     }
 
     window = SDL_CreateWindow(
@@ -18,7 +19,8 @@ View::View() {
         SDL_WINDOW_SHOWN
     );
     if (!window) {
-        throw SDLExcept("Failed to create SDL window");
+        throw Exception("Failed to create SDL window")
+            .set_hint(SDL_GetError());
     }
 
     renderer = SDL_CreateRenderer(
@@ -27,7 +29,8 @@ View::View() {
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
     if (!renderer) {
-        throw SDLExcept("Failed to create renderer");
+        throw Exception("Failed to create renderer")
+            .set_hint(SDL_GetError());
     }
 
     buffer = SDL_CreateTexture(

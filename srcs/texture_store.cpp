@@ -5,7 +5,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"V1", "walls/Window1.png"},
     {"V2", "walls/CoveredWindow.png"},
     {"W2", "walls/BlueWall.png"},
-    {"W3", "walls/WTC.png"},
+    {"W3", "walls/WTC.pngh"},
 };
 
 static uint32_t surface_get_pixel(SDL_Surface *surface, size_t i) {
@@ -52,7 +52,8 @@ Texture::Texture(SDL_Surface *surface) {
 Texture TextureStore::load_texture(const std::string &filename) {
     SDL_Surface *surface = IMG_Load((texture_path + filename).c_str());
     if (!surface)
-        throw SDLExcept("Texture store failed to load " + filename);
+        throw Exception("texture store: failed to load " + filename)
+            .set_hint(SDL_GetError());
 
     auto texture = Texture(surface);
     SDL_FreeSurface(surface);
@@ -61,7 +62,8 @@ Texture TextureStore::load_texture(const std::string &filename) {
 
 TextureStore::TextureStore() {
     if (!IMG_Init(IMG_INIT_PNG))
-        throw SDLExcept("Failed to initialise SDL_image");
+        throw Exception("Failed to initialise SDL_image")
+            .set_hint(SDL_GetError());
 
     for (auto& [short_name, filename] : filename_mapping) {
         std::cout << "Texture store: loading " << filename << std::endl;

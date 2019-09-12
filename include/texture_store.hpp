@@ -8,7 +8,7 @@
 
 #include <SDL2/SDL_image.h>
 
-#include "SDLExcept.hpp"
+#include "exception.hpp"
 
 struct Pixel {
     uint8_t a;
