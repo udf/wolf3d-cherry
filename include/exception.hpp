@@ -8,20 +8,20 @@ class Exception : public std::exception {
     Exception(const Exception &other);
     ~Exception();
 
-    auto set_info(std::string info) -> Exception &;
-    auto set_line(size_t line) -> Exception &;
-    auto set_column(size_t column) -> Exception &;
-    auto set_hint(std::string hint) -> Exception &;
+    Exception &set_info(std::string info);
+    Exception &set_line(size_t line);
+    Exception &set_column(size_t column);
+    Exception &set_hint(std::string hint);
 
-    auto what() const throw() -> const char *;
+    const char *what() const throw();
 
   private:
     Exception();
-    auto operator=(const Exception &other) -> Exception &;
+    Exception &operator=(const Exception &other);
 
-    auto build_pretty_info() -> void;
+    void build_pretty_info();
     template<typename T>
-    auto set_member(T Exception::* member, T value) -> Exception &;
+    Exception &set_member(T Exception::* member, T value);
 
     std::string pretty_info;
 

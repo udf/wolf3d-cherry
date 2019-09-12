@@ -1,4 +1,3 @@
-
 #include "exception.hpp"
 
 Exception::Exception(
@@ -20,36 +19,35 @@ Exception::~Exception() {
 }
 
 template<typename T>
-auto Exception::set_member(T Exception::* member, T value)
-    -> Exception &
+Exception &Exception::set_member(T Exception::* member, T value)
 {
     this->*member = value;
     this->build_pretty_info();
     return *this;
 }
 
-auto Exception::set_info(std::string info) -> Exception &{
+Exception &Exception::set_info(std::string info) {
     return set_member(&Exception::info, info);
 }
 
-auto Exception::set_line(size_t line) -> Exception &{
+Exception &Exception::set_line(size_t line) {
     return set_member(&Exception::line, line);
 }
 
-auto Exception::set_column(size_t column) -> Exception &{
+Exception &Exception::set_column(size_t column) {
     return set_member(&Exception::column, column);
 }
 
-auto Exception::set_hint(std::string hint) -> Exception &{
+Exception &Exception::set_hint(std::string hint) {
     return set_member(&Exception::hint, hint);
 }
 
-auto Exception::what() const throw() -> const char *{
+const char *Exception::what() const throw() {
     return this->pretty_info.c_str();
 }
 
 // Error [on line {line}[, column {column}]]: info "{hint}"
-auto Exception::build_pretty_info() -> void{
+void Exception::build_pretty_info() {
     this->pretty_info = "Error";
     if (this->line) {
         this->pretty_info += " on line " + std::to_string(this->line);
