@@ -40,7 +40,7 @@ class TextureStore {
     TextureStore(const TextureStore &other) = delete;
     TextureStore &operator=(const TextureStore &other) = delete;
 
-    Texture load_texture(const std::string &file_name);
+    Texture load_texture(const std::string &filename);
 
     std::unordered_map<std::string, Texture> textures;
 

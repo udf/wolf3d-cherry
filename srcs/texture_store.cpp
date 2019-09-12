@@ -49,10 +49,10 @@ Texture::Texture(SDL_Surface *surface) {
     SDL_UnlockSurface(surface);
 }
 
-Texture TextureStore::load_texture(const std::string &file_name) {
-    SDL_Surface *surface = IMG_Load((texture_path + file_name).c_str());
+Texture TextureStore::load_texture(const std::string &filename) {
+    SDL_Surface *surface = IMG_Load((texture_path + filename).c_str());
     if (!surface)
-        throw SDLExcept("Texture store failed to load " + file_name);
+        throw SDLExcept("Texture store failed to load " + filename);
 
     auto texture = Texture(surface);
     SDL_FreeSurface(surface);
@@ -63,9 +63,9 @@ TextureStore::TextureStore() {
     if (!IMG_Init(IMG_INIT_PNG))
         throw SDLExcept("Failed to initialise SDL_image");
 
-    for (auto& [short_name, file_name] : filename_mapping) {
-        std::cout << "Texture store: loading " << file_name << std::endl;
-        textures.emplace(short_name, load_texture(file_name));
+    for (auto& [short_name, filename] : filename_mapping) {
+        std::cout << "Texture store: loading " << filename << std::endl;
+        textures.emplace(short_name, load_texture(filename));
     }
 }
 
