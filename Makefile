@@ -18,7 +18,7 @@ SRC_EXT=cpp
 
 CXX=clang++
 CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g
-LIB_FLAGS=-lSDL2
+LIB_FLAGS=-lSDL2 -lSDL2_image
 
 # Paths (with trailing /)
 INCLUDE_DIR=./include/
@@ -26,7 +26,7 @@ SRC_DIR=./srcs/
 BUILD_DIR=./build/
 
 # Files that have a matching .cpp and .hpp
-FILESTEMS=View Controller
+FILESTEMS=View Controller texture_store
 
 # Plain source files
 SRC_FILES=$(FILESTEMS) main

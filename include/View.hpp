@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 #include "Model.hpp"
+#include "texture_store.hpp"
 #include "SDLExcept.hpp"
 
 class View {

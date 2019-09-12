@@ -76,14 +76,14 @@ void View::draw(const Model &model) {
         sizeof(uint32_t) * width * height
     );
 
-    // Center the player's position on screen and draw a box centered on it
+    // Center the player's position on screen and draw a texture centered on it
     Model::Coord pos = model.player_pos;
     pos += Model::Coord(static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f);
-    pos -= 10.0f;
+    pos -= static_cast<float>(model.player_tex->w) / 2.f;
     Point<size_t> offset(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y));
-    for (size_t x = 0; x < 20; x++) {
-        for (size_t y = 0; y < 20; y++) {
-            *texel(pixels, width, x + offset.x, y + offset.y) = 0x3B74B200;
+    for (size_t x = 0; x < model.player_tex->w; x++) {
+        for (size_t y = 0; y < model.player_tex->h; y++) {
+            *texel(pixels, width, x + offset.x, y + offset.y) = model.player_tex->get_uint(x, y);
         }
     }
 

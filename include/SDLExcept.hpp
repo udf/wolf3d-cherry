@@ -21,6 +21,9 @@ class SDLExcept : public std::exception {
             this->message += "\nSDL error: " + sdl_err;
     }
 
+    SDLExcept(std::string msg) : SDLExcept(msg.c_str()) {
+    }
+
     ~SDLExcept() {
     }
 
