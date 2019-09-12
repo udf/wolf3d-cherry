@@ -42,6 +42,22 @@ Exception &Exception::set_hint(std::string hint) {
     return set_member(&Exception::hint, hint);
 }
 
+std::string Exception::get_info() const {
+    return this->info;
+}
+
+size_t Exception::get_line() const {
+    return this->line;
+}
+
+size_t Exception::get_column() const {
+    return this->column;
+}
+
+std::string Exception::get_hint() const {
+    return this->hint;
+}
+
 const char *Exception::what() const throw() {
     return this->pretty_info.c_str();
 }

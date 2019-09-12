@@ -13,6 +13,11 @@ class Exception : public std::exception {
     Exception &set_column(size_t column);
     Exception &set_hint(std::string hint);
 
+    std::string get_info() const;
+    size_t get_line() const;
+    size_t get_column() const;
+    std::string get_hint() const;
+
     const char *what() const throw();
 
   private:
