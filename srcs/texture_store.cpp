@@ -1,4 +1,6 @@
 #include "texture_store.hpp"
+#include <iostream>
+#include <bitset>
 
 const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"W1", "walls/Bricks.png"},
@@ -6,32 +8,23 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"V2", "walls/CoveredWindow.png"},
     {"W2", "walls/BlueWall.png"},
     {"W3", "walls/WTC.png"},
+    {"D", "Dorothy_Haze.png"},
 };
 
-static uint32_t surface_get_pixel(SDL_Surface *surface, size_t i) {
+static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
     auto pixels = static_cast<uint8_t *>(surface->pixels);
-    void *pixel = &pixels[i * surface->format->BytesPerPixel];
+    auto pixel = &pixels[i * surface->format->BytesPerPixel];
+    Pixel ret;
 
-    switch (surface->format->BytesPerPixel) {
-    case 1:
-        return static_cast<uint32_t>(*static_cast<uint8_t *>(pixel));
-    case 2:
-        return static_cast<uint32_t>(*static_cast<uint16_t *>(pixel));
-    case 3:
-    {
-        auto p = static_cast<uint8_t *>(pixel);
-        if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-            return static_cast<uint32_t>(p[0] << 16U | p[1] << 8U | p[2]);
-        } else {
-            return static_cast<uint32_t>(p[2] << 16U | p[1] << 8U | p[0]);
-        }
-    }
-    case 4:
-        return *static_cast<uint32_t *>(pixel);
-
-    default:
-        return 0XFF00FF00;
-    }
+    SDL_GetRGBA(
+        *reinterpret_cast<uint32_t *>(pixel),
+        surface->format,
+        &ret.r,
+        &ret.g,
+        &ret.b,
+        &ret.a
+    );
+    return ret;
 }
 
 Texture::Texture(SDL_Surface *surface) {
