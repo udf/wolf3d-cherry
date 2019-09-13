@@ -45,7 +45,7 @@ class TextureStore {
     std::unordered_map<std::string, Texture> textures;
 
     static const std::unordered_map<std::string, std::string> filename_mapping;
-    const std::string texture_path = "textures/";
+    const std::string texture_path = "assets/textures/";
 
   public:
     TextureStore();

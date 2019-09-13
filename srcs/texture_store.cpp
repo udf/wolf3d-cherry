@@ -5,7 +5,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"V1", "walls/Window1.png"},
     {"V2", "walls/CoveredWindow.png"},
     {"W2", "walls/BlueWall.png"},
-    {"W3", "walls/WTC.pngh"},
+    {"W3", "walls/WTC.png"},
 };
 
 static uint32_t surface_get_pixel(SDL_Surface *surface, size_t i) {
