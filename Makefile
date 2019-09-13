@@ -18,7 +18,7 @@ SRC_EXT=cpp
 
 CXX=clang++
 CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g
-LIB_FLAGS=-lSDL2 -lSDL2_image
+LIB_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf
 
 # Paths (with trailing /)
 INCLUDE_DIR=./include/

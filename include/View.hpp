@@ -24,7 +24,7 @@ class View {
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *buffer = nullptr;
 
-    // TTF_Font *font = nullptr;
+    TTF_Font *font = nullptr;
 
     std::unique_ptr<uint32_t[]> background_pixels;
 

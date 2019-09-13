@@ -33,6 +33,16 @@ View::View() {
             .set_hint(SDL_GetError());
     }
 
+    if (TTF_Init() != 0) {
+        throw Exception("Failed to initialise SDL TTF")
+            .set_hint(TTF_GetError());
+    }
+    font = TTF_OpenFont("assets/fonts/CyberpunkWaifus.ttf", 34);
+    if (!font) {
+        throw Exception("Failed to load font")
+            .set_hint(TTF_GetError());
+    }
+
     buffer = SDL_CreateTexture(
         renderer,
         SDL_PIXELFORMAT_ARGB32,
@@ -45,16 +55,15 @@ View::View() {
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
             auto p = texel(background_pixels.get(), width, x, y);
-            if ((x % 2 == 0) ^ (y % 2 == 0)) {
-                *p = 0;
-            } else {
-                *p = 0xFFFFFF00;
-            }
+            *p = 0x0;
         }
     }
 }
 
 View::~View() {
+    TTF_CloseFont(font);
+    TTF_Quit();
+
     SDL_DestroyTexture(buffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -84,6 +93,7 @@ void View::draw(const Model &model) {
     pos += Model::Coord(static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f);
     pos -= static_cast<float>(model.player_tex->w) / 2.f;
     Point<size_t> offset(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y));
+
     for (size_t x = 0; x < model.player_tex->w; x++) {
         for (size_t y = 0; y < model.player_tex->h; y++) {
             *texel(pixels, width, x + offset.x, y + offset.y) = model.player_tex->get_uint(x, y);
@@ -92,5 +102,18 @@ void View::draw(const Model &model) {
 
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
+
+    auto font_surface = TTF_RenderText_Solid(
+        font,
+        "Hack me like you've never hacked anything before!!",
+        {255, 255, 255, 0}
+    );
+    auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
+    SDL_FreeSurface(font_surface);
+    SDL_Rect src_rect = {5, 5, 0, 0};
+    SDL_QueryTexture(font_tex, NULL, NULL, &src_rect.w, &src_rect.h);
+    SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
+    SDL_DestroyTexture(font_tex);
+
     SDL_RenderPresent(renderer);
 }
