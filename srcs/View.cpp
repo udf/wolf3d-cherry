@@ -37,11 +37,12 @@ View::View() {
         throw Exception("Failed to initialise SDL TTF")
             .set_hint(TTF_GetError());
     }
-    font = TTF_OpenFont("assets/fonts/CyberpunkWaifus.ttf", 34);
+    font = TTF_OpenFont("assets/fonts/CyberpunkWaifus.ttf", 32);
     if (!font) {
         throw Exception("Failed to load font")
             .set_hint(TTF_GetError());
     }
+    TTF_SetFontHinting(font, TTF_HINTING_NONE);
 
     buffer = SDL_CreateTexture(
         renderer,
