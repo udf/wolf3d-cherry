@@ -8,7 +8,6 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"V2", "walls/CoveredWindow.png"},
     {"W2", "walls/BlueWall.png"},
     {"W3", "walls/WTC.png"},
-    {"D", "Dorothy_Haze.png"},
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
@@ -35,8 +34,7 @@ Texture::Texture(SDL_Surface *surface) {
     this->pixels = std::make_unique<Pixel[]>(total);
 
     for (size_t i = 0; i < total; i++) {
-        auto pixel = surface_get_pixel(surface, i);
-        pixels[i] = reinterpret_cast<Pixel &>(pixel);
+        pixels[i] = surface_get_pixel(surface, i);
     }
 
     SDL_UnlockSurface(surface);
