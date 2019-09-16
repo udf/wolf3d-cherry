@@ -26,12 +26,13 @@ static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
     return ret;
 }
 
-Texture::Texture(SDL_Surface *surface) {
+Texture::Texture(const std::string &short_name, SDL_Surface *surface) {
     SDL_LockSurface(surface);
     this->w = static_cast<size_t>(surface->w);
     this->h = static_cast<size_t>(surface->h);
     const size_t total = w * h;
     this->pixels = std::make_unique<Pixel[]>(total);
+    this->short_name = short_name;
 
     for (size_t i = 0; i < total; i++) {
         pixels[i] = surface_get_pixel(surface, i);
@@ -40,13 +41,14 @@ Texture::Texture(SDL_Surface *surface) {
     SDL_UnlockSurface(surface);
 }
 
-Texture TextureStore::load_texture(const std::string &filename) {
+Texture TextureStore::load_texture(const std::string &short_name) {
+    const std::string &filename = filename_mapping.at(short_name);
     SDL_Surface *surface = IMG_Load((texture_path + filename).c_str());
     if (!surface)
         throw Exception("texture store: failed to load " + filename)
             .set_hint(IMG_GetError());
 
-    auto texture = Texture(surface);
+    auto texture = Texture(short_name, surface);
     SDL_FreeSurface(surface);
     return texture;
 }
@@ -58,7 +60,7 @@ TextureStore::TextureStore() {
 
     for (auto& [short_name, filename] : filename_mapping) {
         std::cout << "Texture store: loading " << filename << std::endl;
-        textures.emplace(short_name, load_texture(filename));
+        textures.emplace(short_name, load_texture(short_name));
     }
 }
 

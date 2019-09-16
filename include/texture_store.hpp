@@ -23,8 +23,9 @@ struct Texture {
     std::unique_ptr<Pixel[]> pixels;
     size_t w;
     size_t h;
+    std::string short_name;
 
-    Texture(SDL_Surface *surface);
+    Texture(const std::string &short_name, SDL_Surface *surface);
 
     const Pixel *get(size_t x, size_t y) const {
         return &pixels[y * w + x];
