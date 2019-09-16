@@ -5,7 +5,7 @@
 const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"W1", "walls/Bricks.png"},
     {"V1", "walls/Window1.png"},
-    {"V2", "walls/CoveredWindow.png"},
+    {"V2", "walls/CoveredWindow1.png"},
     {"W2", "walls/BlueWall.png"},
     {"W3", "walls/WTC.png"},
 };
