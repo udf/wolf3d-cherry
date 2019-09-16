@@ -29,7 +29,7 @@ BUILD_DIR=./build/
 FILESTEMS=View Controller exception texture_store
 
 # Plain source files
-SRC_FILES=$(FILESTEMS) main
+SRC_FILES=$(FILESTEMS) model_map main
 
 # Plain headers
 INCLUDE_FILES=$(FILESTEMS) Model Point

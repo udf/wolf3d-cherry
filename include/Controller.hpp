@@ -16,7 +16,6 @@ class Controller {
     void process_input(uint32_t elapsed_ms);
 
     View view;
-    Model model;
 
     bool running = true;
 
@@ -25,4 +24,6 @@ class Controller {
     ~Controller();
 
     void run();
+
+    Model model;
 };
