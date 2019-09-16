@@ -69,5 +69,12 @@ TextureStore::~TextureStore() {
 }
 
 const Texture *TextureStore::get(std::string short_name) const {
-    return &textures.at(short_name);
+    if (short_name == "__")
+        return nullptr;
+    try {
+        return &textures.at(short_name);
+    } catch (std::out_of_range &e) {
+        throw Exception("Unknown texture short name:")
+            .set_hint(short_name);
+    }
 }
