@@ -111,6 +111,19 @@ void View::draw(const Model &model) {
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
+    // Compute a vector to center everything around the player
+    Model::Coord center = Model::Coord(
+        static_cast<float>(width) / 2.f,
+        static_cast<float>(height) / 2.f
+    );
+
+    Model::Coord transform = center - model.player.pos;
+
+    // draw dot for player
+    SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+    SDL_RenderFillRectF(renderer, &rect);
+
     // TODO: move this into a function
     // auto font_surface = TTF_RenderText_Solid(
     //     font,
