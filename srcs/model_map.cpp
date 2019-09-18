@@ -8,6 +8,13 @@
 #include "Model.hpp"
 #include "exception.hpp"
 
+const decltype(Model::cardinal_angles) Model::cardinal_angles{
+    {'n', 180},
+    {'e', 90},
+    {'w', 270},
+    {'s', 0}
+};
+
 template<size_t N>
 static std::array<MapLine, N> get_n_lines(
     std::istream &s,
@@ -47,8 +54,8 @@ static std::array<MapToken, N> get_n_tokens(
     return tokens;
 }
 
-std::vector<Cell> Model::parse_lines(std::array<MapLine, 3> &lines) {
-    std::vector<Cell> cells;
+std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
+    std::vector<ParsedCell> cells;
     while (
         std::any_of(
             lines.begin(),
@@ -59,23 +66,32 @@ std::vector<Cell> Model::parse_lines(std::array<MapLine, 3> &lines) {
         )
     ) {
         cells.emplace_back();
-        Cell &cell = cells.back();
+        ParsedCell &c = cells.back();
 
         // TODO: make a function to wrap these in a try/catch so we can add
         // line/column info
         auto tokens = get_n_tokens<3>(lines[0]);
-        cell.ceil = texture_store.get(tokens[0].val);
-        cell.wall_top = texture_store.get(tokens[1].val);
+        c.cell.ceil = texture_store.get(tokens[0].val);
+        c.cell.wall_top = texture_store.get(tokens[1].val);
         // tokens[2] unused (sprite scale?)
 
         tokens = get_n_tokens<3>(lines[1]);
-        cell.wall_left = texture_store.get(tokens[0].val);
+        c.cell.wall_left = texture_store.get(tokens[0].val);
+        if (tokens[1].val.size() == 2 && tokens[1].val[0] == '@') {
+            char direction = tokens[1].val[1];
+            try {
+                c.player_rot = cardinal_angles.at(direction);
+            } catch (std::out_of_range) {
+                throw Exception("Unknown direction")
+                    .set_hint(std::string(1, direction));
+            }
+        }
         // tokens[1] unused (sprite?)
-        cell.wall_right = texture_store.get(tokens[2].val);
+        c.cell.wall_right = texture_store.get(tokens[2].val);
 
         tokens = get_n_tokens<3>(lines[2]);
-        cell.floor = texture_store.get(tokens[0].val);
-        cell.wall_bottom = texture_store.get(tokens[1].val);
+        c.cell.floor = texture_store.get(tokens[0].val);
+        c.cell.wall_bottom = texture_store.get(tokens[1].val);
         // tokens[2] unused (sprite offset?)
     }
 
@@ -90,7 +106,7 @@ void Model::load_map(std::string filename) {
     }
 
     size_t last_line = 0;
-    std::vector<std::vector<Cell>> tmp_map;
+    std::vector<std::vector<ParsedCell>> tmp_map;
     while (fs.good()) {
         auto lines = get_n_lines<3>(fs, last_line);
         last_line = lines.back().line;
@@ -99,10 +115,28 @@ void Model::load_map(std::string filename) {
     }
     map_h = tmp_map.size();
 
-    // resize each vector to the max width and append it to the map
+    // resize each vector to the max width
     for (auto &row : tmp_map) {
         row.resize(map_w);
-        map.insert(map.end(), row.begin(), row.end());
+    }
+
+    // parse optional data from cells
+    for (size_t x = 0; x < map_w; x++) {
+        for (size_t y = 0; y < map_h; y++) {
+            auto &cell = tmp_map[y][x];
+            // TODO: error on multiple player positions
+            if (cell.player_rot) {
+                player.pos.x = static_cast<float>(x);
+                player.pos.y = static_cast<float>(y);
+                player.rot = cell.player_rot.value();
+            }
+        }
+    }
+
+    for (auto &row : tmp_map) {
+        for (auto &item : row) {
+            map.push_back(item.cell);
+        }
     }
 }
 

@@ -29,13 +29,13 @@ void Controller::process_input(uint32_t elapsed_ms) {
     auto thrust = static_cast<Model::Coord::type>(elapsed_ms) * 0.1f;
 
     if (state[SDL_SCANCODE_LEFT])
-        model.player_pos.x -= thrust;
+        model.player.pos.x -= thrust;
     if (state[SDL_SCANCODE_RIGHT])
-        model.player_pos.x += thrust;
+        model.player.pos.x += thrust;
     if (state[SDL_SCANCODE_UP])
-        model.player_pos.y -= thrust;
+        model.player.pos.y -= thrust;
     if (state[SDL_SCANCODE_DOWN])
-        model.player_pos.y += thrust;
+        model.player.pos.y += thrust;
 }
 
 void Controller::run() {

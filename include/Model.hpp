@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <unordered_map>
 
 #include "Point.hpp"
 #include "texture_store.hpp"
@@ -42,9 +43,15 @@ struct Cell {
     const Texture *wall_right = nullptr;
 };
 
+struct ParsedCell {
+    Cell cell;
+
+    std::optional<float> player_rot;
+    // TODO: optional sprite
+};
+
 struct Model {
     Model() {
-        player_tex = texture_store.get("W3");
     }
 
     void load_map(std::string filename);
@@ -53,15 +60,20 @@ struct Model {
     // TODO: check if fixed point is faster on pi
     using Coord = Point<float>;
 
-    Coord player_pos = Coord(0, 0);
+    struct Player {
+        Coord pos = Coord(0, 0);
+        float rot = 0;
+    };
 
-    const Texture *player_tex;
+    Player player;
+
+    static const std::unordered_map<char, float> cardinal_angles;
 
   private:
     Model(const Model &other) = delete;
     Model &operator=(const Model &other) = delete;
 
-    std::vector<Cell> parse_lines(std::array<MapLine, 3> &lines);
+    std::vector<ParsedCell> parse_lines(std::array<MapLine, 3> &lines);
 
     TextureStore texture_store;
     std::vector<Cell> map;

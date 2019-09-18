@@ -77,6 +77,7 @@ View::~View() {
 }
 
 void View::draw(const Model &model) {
+    (void)model;
     uint32_t *pixels;
     int pitch;
 
@@ -95,17 +96,17 @@ void View::draw(const Model &model) {
     );
 
     // Center the player's position on screen and draw a texture centered on it
-    Model::Coord pos = model.player_pos;
-    pos += Model::Coord(static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f);
-    pos -= static_cast<float>(model.player_tex->w) / 2.f;
-    Point<size_t> offset(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y));
+    // Model::Coord pos = model.player_pos;
+    // pos += Model::Coord(static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f);
+    // pos -= static_cast<float>(model.player_tex->w) / 2.f;
+    // Point<size_t> offset(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y));
 
-    for (size_t x = 0; x < model.player_tex->w; x++) {
-        for (size_t y = 0; y < model.player_tex->h; y++) {
-            auto p = model.player_tex->get(x, y);
-            *texel(pixels, width, x + offset.x, y + offset.y) = SDL_MapRGB(buffer_format, p->r, p->g, p->b);
-        }
-    }
+    // for (size_t x = 0; x < model.player_tex->w; x++) {
+    //     for (size_t y = 0; y < model.player_tex->h; y++) {
+    //         auto p = model.player_tex->get(x, y);
+    //         *texel(pixels, width, x + offset.x, y + offset.y) = SDL_MapRGB(buffer_format, p->r, p->g, p->b);
+    //     }
+    // }
 
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
