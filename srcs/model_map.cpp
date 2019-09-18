@@ -126,8 +126,8 @@ void Model::load_map(std::string filename) {
             auto &cell = tmp_map[y][x];
             // TODO: error on multiple player positions
             if (cell.player_rot) {
-                player.pos.x = static_cast<float>(x);
-                player.pos.y = static_cast<float>(y);
+                player.pos.x = static_cast<float>(x) + 0.5f;
+                player.pos.y = static_cast<float>(y) + 0.5f;
                 player.rot = cell.player_rot.value();
             }
         }
