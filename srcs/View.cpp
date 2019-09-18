@@ -110,17 +110,18 @@ void View::draw(const Model &model) {
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    auto font_surface = TTF_RenderText_Solid(
-        font,
-        "Hack me like you've never hacked anything before!!",
-        {255, 255, 255, 0}
-    );
-    auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
-    SDL_FreeSurface(font_surface);
-    SDL_Rect src_rect = {5, 5, 0, 0};
-    SDL_QueryTexture(font_tex, NULL, NULL, &src_rect.w, &src_rect.h);
-    SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
-    SDL_DestroyTexture(font_tex);
+    // TODO: move this into a function
+    // auto font_surface = TTF_RenderText_Solid(
+    //     font,
+    //     "Hack me like you've never hacked anything before!!",
+    //     {255, 255, 255, 0}
+    // );
+    // auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
+    // SDL_FreeSurface(font_surface);
+    // SDL_Rect src_rect = {5, 5, 0, 0};
+    // SDL_QueryTexture(font_tex, NULL, NULL, &src_rect.w, &src_rect.h);
+    // SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
+    // SDL_DestroyTexture(font_tex);
 
     SDL_RenderPresent(renderer);
 }
