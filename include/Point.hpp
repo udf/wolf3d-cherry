@@ -74,6 +74,17 @@ class Point {
         return *this;
     }
 
+    Point &operator*=(const T &val) {
+        this->x *= val;
+        this->y *= val;
+        return *this;
+    }
+    Point &operator/=(const T &val) {
+        this->x /= val;
+        this->y /= val;
+        return *this;
+    }
+
     Point operator*(const T &val) const {
         return Point(this->x * val, this->y * val);
     }
