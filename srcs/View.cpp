@@ -117,8 +117,8 @@ void View::draw(const Model &model) {
         static_cast<float>(height) / 2.f
     );
 
-    Model::Coord transform = center - model.player.pos;
     const Model::Coord::type scale = 50.f;
+    Model::Coord transform = center - model.player.pos;
 
     // draw player
     SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
@@ -132,25 +132,39 @@ void View::draw(const Model &model) {
         center.y + model.player.rot_vec.y * 10
     );
 
-    // draw map grid
-    SDL_SetRenderDrawColor(renderer, 128, 128, 128, 0);
-    for (size_t x = 0; x <= model.map_w; x++) {
-        Model::Coord p1 = {(float)x, 0.f};
-        Model::Coord p2 = {(float)x, (float)model.map_h};
+    const auto draw_scaled_line = [&](auto x1, auto y1, auto x2, auto y2) {
+        Model::Coord p1 = {(float)x1, (float)y1};
+        Model::Coord p2 = {(float)x2, (float)y2};
         p1 *= scale;
-        p2 *= scale;
         p1 += transform;
+        p2 *= scale;
         p2 += transform;
         SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
+    };
+
+    // draw map grid
+    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 0);
+    for (size_t x = 0; x <= model.map_w; x++) {
+        draw_scaled_line(x, 0, x, model.map_h);
     }
     for (size_t y = 0; y <= model.map_h; y++) {
-        Model::Coord p1 = {0.f, (float)y};
-        Model::Coord p2 = {(float)model.map_w, (float)y};
-        p1 *= scale;
-        p2 *= scale;
-        p1 += transform;
-        p2 += transform;
-        SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
+        draw_scaled_line(0, y, model.map_w, y);
+    }
+
+    // draw walls
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    for (size_t x = 0; x < model.map_w; x++) {
+        for (size_t y = 0; y < model.map_h; y++) {
+            auto cell = model.get_cell((ssize_t)x, (ssize_t)y);
+            if (cell->wall_top)
+                draw_scaled_line(x, y, x + 1, y);
+            if (cell->wall_bottom)
+                draw_scaled_line(x, y + 1, x + 1, y + 1);
+            if (cell->wall_left)
+                draw_scaled_line(x, y, x, y + 1);
+            if (cell->wall_right)
+                draw_scaled_line(x + 1, y, x + 1, y + 1);
+        }
     }
 
 
