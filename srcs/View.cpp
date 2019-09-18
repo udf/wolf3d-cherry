@@ -120,18 +120,6 @@ void View::draw(const Model &model) {
     const Model::Coord::type scale = 50.f;
     Model::Coord transform = center - model.player.pos * scale;
 
-    // draw player
-    SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-    SDL_RenderFillRectF(renderer, &rect);
-    SDL_RenderDrawLineF(
-        renderer,
-        center.x,
-        center.y,
-        center.x + model.player.rot_vec.x * 10,
-        center.y + model.player.rot_vec.y * 10
-    );
-
     const auto draw_scaled_line = [&](auto x1, auto y1, auto x2, auto y2) {
         Model::Coord p1 = {(float)x1, (float)y1};
         Model::Coord p2 = {(float)x2, (float)y2};
@@ -166,6 +154,18 @@ void View::draw(const Model &model) {
                 draw_scaled_line(x + 1, y, x + 1, y + 1);
         }
     }
+
+    // draw player
+    SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+    SDL_RenderFillRectF(renderer, &rect);
+    SDL_RenderDrawLineF(
+        renderer,
+        center.x,
+        center.y,
+        center.x + model.player.rot_vec.x * 10,
+        center.y + model.player.rot_vec.y * 10
+    );
 
 
     // TODO: move this into a function
