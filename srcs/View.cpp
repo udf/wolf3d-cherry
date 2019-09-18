@@ -118,12 +118,12 @@ void View::draw(const Model &model) {
     );
 
     Model::Coord transform = center - model.player.pos;
+    const Model::Coord::type scale = 50.f;
 
     // draw player
     SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
     SDL_RenderFillRectF(renderer, &rect);
-
     SDL_RenderDrawLineF(
         renderer,
         center.x,
@@ -131,6 +131,28 @@ void View::draw(const Model &model) {
         center.x + model.player.rot_vec.x * 10,
         center.y + model.player.rot_vec.y * 10
     );
+
+    // draw map grid
+    SDL_SetRenderDrawColor(renderer, 128, 128, 128, 0);
+    for (size_t x = 0; x <= model.map_w; x++) {
+        Model::Coord p1 = {(float)x, 0.f};
+        Model::Coord p2 = {(float)x, (float)model.map_h};
+        p1 *= scale;
+        p2 *= scale;
+        p1 += transform;
+        p2 += transform;
+        SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
+    }
+    for (size_t y = 0; y <= model.map_h; y++) {
+        Model::Coord p1 = {0.f, (float)y};
+        Model::Coord p2 = {(float)model.map_w, (float)y};
+        p1 *= scale;
+        p2 *= scale;
+        p1 += transform;
+        p2 += transform;
+        SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
+    }
+
 
     // TODO: move this into a function
     // auto font_surface = TTF_RenderText_Solid(

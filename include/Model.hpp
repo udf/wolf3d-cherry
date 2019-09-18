@@ -70,6 +70,9 @@ struct Model {
 
     static const std::unordered_map<char, float> cardinal_angles;
 
+    size_t map_w = 0;
+    size_t map_h = 0;
+
   private:
     Model(const Model &other) = delete;
     Model &operator=(const Model &other) = delete;
@@ -78,6 +81,4 @@ struct Model {
 
     TextureStore texture_store;
     std::vector<Cell> map;
-    size_t map_w = 0;
-    size_t map_h = 0;
 };
