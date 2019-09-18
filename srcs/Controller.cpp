@@ -26,10 +26,10 @@ void Controller::process_input(uint32_t elapsed_ms) {
     }
 
     const uint8_t *state = SDL_GetKeyboardState(NULL);
-    auto elapsed_f = static_cast<Model::Coord::type>(elapsed_ms);
+    auto elapsed_sec = static_cast<Model::Coord::type>(elapsed_ms) / 1000.f;
 
     if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_RIGHT]) {
-        auto thrust = elapsed_f * 0.25f;
+        auto thrust = elapsed_sec * 180.f;
         if (state[SDL_SCANCODE_RIGHT])
             thrust *= -1;
         model.player.rot += thrust;
@@ -37,7 +37,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
     model.player.rot_vec = {sin_d(model.player.rot), cos_d(model.player.rot)};
 
     if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_DOWN]) {
-        auto thrust = elapsed_f * 0.05f;
+        auto thrust = elapsed_sec * 1.5f;
         if (state[SDL_SCANCODE_DOWN])
             thrust *= -1;
         model.player.pos += model.player.rot_vec * thrust;

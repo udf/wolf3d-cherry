@@ -118,7 +118,7 @@ void View::draw(const Model &model) {
     );
 
     const Model::Coord::type scale = 50.f;
-    Model::Coord transform = center - model.player.pos;
+    Model::Coord transform = center - model.player.pos * scale;
 
     // draw player
     SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
