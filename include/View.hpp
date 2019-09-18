@@ -23,6 +23,7 @@ class View {
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *buffer = nullptr;
+    SDL_PixelFormat *buffer_format = nullptr;
 
     TTF_Font *font = nullptr;
 

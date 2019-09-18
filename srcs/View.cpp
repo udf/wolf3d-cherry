@@ -1,5 +1,6 @@
 #include "View.hpp"
 
+// TODO: maybe use reference
 uint32_t *texel(uint32_t *pixels, size_t width, size_t x, size_t y) {
     return &pixels[y * width + x];
 }
@@ -46,17 +47,20 @@ View::View() {
 
     buffer = SDL_CreateTexture(
         renderer,
-        SDL_PIXELFORMAT_ARGB32,
+        SDL_PIXELFORMAT_RGB888,
         SDL_TEXTUREACCESS_STREAMING,
         static_cast<int>(width),
         static_cast<int>(height)
     );
+    uint32_t buffer_format_enum;
+    SDL_QueryTexture(buffer, &buffer_format_enum, NULL, NULL, NULL);
+    buffer_format = SDL_AllocFormat(buffer_format_enum);
 
     background_pixels = std::make_unique<uint32_t[]>(width * height);
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
             auto p = texel(background_pixels.get(), width, x, y);
-            *p = 0x0;
+            *p = SDL_MapRGB(buffer_format, 0, 0, 0);
         }
     }
 }
@@ -65,6 +69,7 @@ View::~View() {
     TTF_CloseFont(font);
     TTF_Quit();
 
+    SDL_FreeFormat(buffer_format);
     SDL_DestroyTexture(buffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -97,7 +102,8 @@ void View::draw(const Model &model) {
 
     for (size_t x = 0; x < model.player_tex->w; x++) {
         for (size_t y = 0; y < model.player_tex->h; y++) {
-            *texel(pixels, width, x + offset.x, y + offset.y) = model.player_tex->get_uint(x, y);
+            auto p = model.player_tex->get(x, y);
+            *texel(pixels, width, x + offset.x, y + offset.y) = SDL_MapRGB(buffer_format, p->r, p->g, p->b);
         }
     }
 
