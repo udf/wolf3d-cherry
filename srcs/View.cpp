@@ -119,10 +119,18 @@ void View::draw(const Model &model) {
 
     Model::Coord transform = center - model.player.pos;
 
-    // draw dot for player
+    // draw player
     SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
     SDL_RenderFillRectF(renderer, &rect);
+
+    SDL_RenderDrawLineF(
+        renderer,
+        center.x,
+        center.y,
+        center.x + model.player.rot_vec.x * 10,
+        center.y + model.player.rot_vec.y * 10
+    );
 
     // TODO: move this into a function
     // auto font_surface = TTF_RenderText_Solid(

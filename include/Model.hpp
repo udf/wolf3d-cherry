@@ -63,6 +63,7 @@ struct Model {
     struct Player {
         Coord pos = Coord(0, 0);
         float rot = 0;
+        Coord rot_vec;
     };
 
     Player player;

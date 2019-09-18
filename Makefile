@@ -26,7 +26,7 @@ SRC_DIR=./srcs/
 BUILD_DIR=./build/
 
 # Files that have a matching .cpp and .hpp
-FILESTEMS=View Controller exception texture_store
+FILESTEMS=util View Controller exception texture_store
 
 # Plain source files
 SRC_FILES=$(FILESTEMS) model_map main

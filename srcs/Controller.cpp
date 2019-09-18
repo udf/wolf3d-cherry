@@ -26,16 +26,22 @@ void Controller::process_input(uint32_t elapsed_ms) {
     }
 
     const uint8_t *state = SDL_GetKeyboardState(NULL);
-    auto thrust = static_cast<Model::Coord::type>(elapsed_ms) * 0.1f;
+    auto elapsed_f = static_cast<Model::Coord::type>(elapsed_ms);
 
-    if (state[SDL_SCANCODE_LEFT])
-        model.player.pos.x -= thrust;
-    if (state[SDL_SCANCODE_RIGHT])
-        model.player.pos.x += thrust;
-    if (state[SDL_SCANCODE_UP])
-        model.player.pos.y -= thrust;
-    if (state[SDL_SCANCODE_DOWN])
-        model.player.pos.y += thrust;
+    if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_RIGHT]) {
+        auto thrust = elapsed_f * 0.25f;
+        if (state[SDL_SCANCODE_RIGHT])
+            thrust *= -1;
+        model.player.rot += thrust;
+    }
+    model.player.rot_vec = {sin_d(model.player.rot), cos_d(model.player.rot)};
+
+    if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_DOWN]) {
+        auto thrust = elapsed_f * 1.0f;
+        if (state[SDL_SCANCODE_DOWN])
+            thrust *= -1;
+        model.player.pos += model.player.rot_vec * thrust;
+    }
 }
 
 void Controller::run() {

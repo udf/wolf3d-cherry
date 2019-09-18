@@ -7,6 +7,7 @@
 
 #include "Model.hpp"
 #include "View.hpp"
+#include "util.hpp"
 
 class Controller {
   private:
