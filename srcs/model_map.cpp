@@ -140,6 +140,7 @@ void Model::load_map(std::string filename) {
     }
 }
 
+// TODO: avoid duplicating these somehow
 Cell *Model::get_cell(ssize_t x, ssize_t y) {
     if (x < 0 || y < 0)
         return nullptr;
