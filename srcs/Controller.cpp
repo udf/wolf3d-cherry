@@ -30,7 +30,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
 
     if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_RIGHT]) {
         auto thrust = elapsed_sec * 180.f;
-        if (state[SDL_SCANCODE_RIGHT])
+        if (state[SDL_SCANCODE_LEFT])
             thrust *= -1;
         model.player.rot += thrust;
     }
