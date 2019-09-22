@@ -9,10 +9,10 @@
 #include "exception.hpp"
 
 const decltype(Model::cardinal_angles) Model::cardinal_angles{
-    {'n', 180},
-    {'e', 90},
-    {'w', 270},
-    {'s', 0}
+    {'n', 270},
+    {'e', 0},
+    {'w', 180},
+    {'s', 90}
 };
 
 template<size_t N>

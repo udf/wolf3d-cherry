@@ -34,7 +34,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
             thrust *= -1;
         model.player.rot += thrust;
     }
-    model.player.rot_vec = {sin_d(model.player.rot), cos_d(model.player.rot)};
+    model.player.rot_vec = {cos_d(model.player.rot), sin_d(model.player.rot)};
 
     if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_DOWN]) {
         auto thrust = elapsed_sec * 1.5f;
