@@ -136,6 +136,7 @@ void View::cast_ray(
     }
 
     // Do the thing
+    size_t iters = 0;
     while(!hit) {
         if (mapX < 0 || mapY < 0 || (size_t)mapX >= m.map_w || (size_t)mapY >= m.map_h)
             break; // down and cry
@@ -174,9 +175,12 @@ void View::cast_ray(
         } else {
             sideDistX += deltaDistX;
         }
+        iters++;
     }
-    if (m.debug)
+    if (m.debug) {
+        std::cout << "iters: " << iters << std::endl;
         std::cout << std::endl;
+    }
 }
 
 void View::draw_text(const char *text, int x, int y) {
