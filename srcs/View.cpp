@@ -76,12 +76,7 @@ View::~View() {
     SDL_Quit();
 }
 
-void View::cast_ray(
-    const Model &m,
-    float camX,
-    float scale,
-    Model::Coord transform
-) {
+auto View::cast_ray(const Model &m, float camX) -> RayHit {
     // Calculate ray direction
     const float rayDirX = m.player.rot_vec.x + m.cam_rot_vec.x * camX;
     const float rayDirY = m.player.rot_vec.y + m.cam_rot_vec.y * camX;
@@ -100,32 +95,52 @@ void View::cast_ray(
     // What direction to step in
     ssize_t stepX, stepY;
 
-    bool hit = false;
-    bool is_ns;
+    RayHit hit;
+    bool is_ns = false;
+
+    // Which wall to check for the near and far cell
+    const Texture *Cell::* ew_near_texture;
+    const Texture *Cell::* ew_far_texture;
+    const Texture *Cell::* ns_near_texture;
+    const Texture *Cell::* ns_far_texture;
 
     // Calculate step and initial sideDist
     if (rayDirX < 0) {
         stepX = -1;
         sideDistX = (m.player.pos.x - (float)mapX) * deltaDistX;
+        ew_near_texture = &Cell::wall_left;
+        ew_far_texture = &Cell::wall_right;
+        if (m.debug) {
+            std::cout << "left right" << std::endl;
+        }
     } else {
         stepX = 1;
         sideDistX = ((float)mapX + 1.0f - m.player.pos.x) * deltaDistX;
+        ew_near_texture = &Cell::wall_right;
+        ew_far_texture = &Cell::wall_left;
+        if (m.debug) {
+            std::cout << "right left" << std::endl;
+        }
     }
     if (rayDirY < 0) {
         stepY = -1;
         sideDistY = (m.player.pos.y - (float)mapY) * deltaDistY;
+        ns_near_texture = &Cell::wall_top;
+        ns_far_texture = &Cell::wall_bottom;
+        if (m.debug) {
+            std::cout << "top bottom" << std::endl;
+        }
     } else {
         stepY = 1;
         sideDistY = ((float)mapY + 1.0f - m.player.pos.y) * deltaDistY;
+        ns_near_texture = &Cell::wall_bottom;
+        ns_far_texture = &Cell::wall_top;
+        if (m.debug) {
+            std::cout << "bottom top" << std::endl;
+        }
     }
 
-    SDL_FRect rect = {0, 0, 2.f, 2.f};
-
     if (m.debug) {
-        std::cout << "player data" << std::endl;
-        std::cout << "pos(" << m.player.pos.x << ", " << m.player.pos.y << ")" << std::endl;
-        std::cout << "ra " << m.player.rot << std::endl;
-        std::cout << "dir(" << m.player.rot_vec.x << ", " << m.player.rot_vec.y << ")" << std::endl;
         std::cout << "cast data" << std::endl;
         std::cout << "ray(" << rayDirX << ", " << rayDirY << ")" << std::endl;
         std::cout << "delta(" << deltaDistX << ", " << deltaDistY << ")" << std::endl;
@@ -137,7 +152,7 @@ void View::cast_ray(
 
     // Do the thing
     size_t iters = 0;
-    while(!hit) {
+    while(true) {
         if (mapX < 0 || mapY < 0 || (size_t)mapX >= m.map_w || (size_t)mapY >= m.map_h)
             break; // down and cry
         if (sideDistX < sideDistY) {
@@ -154,21 +169,28 @@ void View::cast_ray(
             std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
         }
 
-        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 0);
-        rect.x = (float)mapX * scale + transform.x;
-        rect.y = (float)mapY * scale + transform.y;
-        SDL_RenderFillRectF(renderer, &rect);
-
+        ssize_t mapNearX = mapX;
+        ssize_t mapNearY = mapY;
         if (is_ns) {
-            SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
-            rect.x = (m.player.pos.x + sideDistY * rayDirX) * scale + transform.x;
-            rect.y = (m.player.pos.y + sideDistY * rayDirY) * scale + transform.y;
+            mapNearY -= stepY;
+            auto cell = m.get_cell(mapNearX, mapNearY);
+            if (cell)
+                hit.tex = cell->*ns_near_texture;
+            cell = m.get_cell(mapX, mapY);
+            if (cell)
+                hit.tex = cell->*ns_far_texture;
         } else {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
-            rect.x = (m.player.pos.x + sideDistX * rayDirX) * scale + transform.x;
-            rect.y = (m.player.pos.y + sideDistX * rayDirY) * scale + transform.y;
+            mapNearX -= stepX;
+            auto cell = m.get_cell(mapNearX, mapNearY);
+            if (cell)
+                hit.tex = cell->*ew_near_texture;
+            cell = m.get_cell(mapX, mapY);
+            if (cell)
+                hit.tex = cell->*ew_far_texture;
         }
-        SDL_RenderFillRectF(renderer, &rect);
+
+        if (hit.tex)
+            break;
 
         if (is_ns) {
             sideDistY += deltaDistY;
@@ -181,6 +203,14 @@ void View::cast_ray(
         std::cout << "iters: " << iters << std::endl;
         std::cout << std::endl;
     }
+    if (hit.tex) {
+        hit.dist = (
+            is_ns
+            ? ((float)mapY - m.player.pos.y + (1.f - (float)stepY) / 2.f) / rayDirY
+            : ((float)mapX - m.player.pos.x + (1.f - (float)stepX) / 2.f) / rayDirX
+        );
+    }
+    return hit;
 }
 
 void View::draw_text(const char *text, int x, int y) {
@@ -214,6 +244,37 @@ void View::draw(const Model &model) {
         static_cast<void *>(background_pixels.get()),
         sizeof(uint32_t) * width * height
     );
+
+    if (model.debug) {
+        std::cout << "player data" << std::endl;
+        std::cout << "pos(" << model.player.pos.x << ", " << model.player.pos.y << ")" << std::endl;
+        std::cout << "ra " << model.player.rot << std::endl;
+        std::cout << "dir(" << model.player.rot_vec.x << ", " << model.player.rot_vec.y << ")" << std::endl;
+    }
+    for (uint32_t x = 0; x < width; x++) {
+        float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
+        if (model.debug) {
+            std::cout << camX << std::endl;
+        }
+        auto hit = cast_ray(model, camX);
+        if (!hit.tex)
+            continue;
+        float line_height = (float)height / hit.dist;
+        size_t y_start = (size_t)std::clamp(
+            (float)height / 2.f - line_height / 2.f,
+            0.f,
+            (float)(height - 1)
+        );
+        size_t y_end = (size_t)std::clamp(
+            (float)height / 2.f + line_height / 2.f,
+            0.f,
+            (float)(height - 1)
+        );
+
+        for (size_t y = y_start; y < y_end; y++) {
+            *texel(pixels, width, x, y) = (uint32_t)reinterpret_cast<uintptr_t>(hit.tex);
+        }
+    }
 
     // Center the player's position on screen and draw a texture centered on it
     // Model::Coord pos = model.player_pos;
@@ -286,8 +347,6 @@ void View::draw(const Model &model) {
         center.x + model.player.rot_vec.x * 10,
         center.y + model.player.rot_vec.y * 10
     );
-
-    cast_ray(model, 0, scale, transform);
 
     uint32_t frame_time = SDL_GetTicks() - model.frame_start_ms;
 

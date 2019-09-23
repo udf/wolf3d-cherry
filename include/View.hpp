@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <memory>
+#include <algorithm>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -11,19 +12,20 @@
 #include "Model.hpp"
 #include "texture_store.hpp"
 #include "exception.hpp"
+#include "util.hpp"
 
 class View {
   private:
+    struct RayHit {
+        const Texture *tex = nullptr;
+        float dist;
+    };
+
     View(const View &other) = delete;
     View &operator=(const View &other) = delete;
 
     void draw_text(const char *text, int x, int y);
-    void cast_ray(
-        const Model &m,
-        float camX,
-        float scale,
-        Model::Coord transform
-    );
+    RayHit cast_ray(const Model &m, float camX);
 
     uint32_t width = 1366;
     uint32_t height = 768;
