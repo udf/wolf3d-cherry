@@ -16,8 +16,8 @@ NAME=wolf3d
 HEADER_EXT=hpp
 SRC_EXT=cpp
 
-CXX=clang++
-CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g -O3 -pg
+CXX=g++
+CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g -O3
 LIB_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf
 
 # Paths (with trailing /)
