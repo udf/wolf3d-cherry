@@ -100,7 +100,7 @@ void View::cast_ray(
     // What direction to step in
     ssize_t stepX, stepY;
 
-    // bool hit = false;
+    bool hit = false;
     bool is_ns;
 
     // Calculate step and initial sideDist
@@ -136,8 +136,9 @@ void View::cast_ray(
     }
 
     // Do the thing
-    // while(!hit) {
-    for (size_t i = 0; i < 2; i++) {
+    while(!hit) {
+        if (mapX < 0 || mapY < 0 || (size_t)mapX >= m.map_w || (size_t)mapY >= m.map_h)
+            break; // down and cry
         if (sideDistX < sideDistY) {
             mapX += stepX;
             is_ns = false;
@@ -278,8 +279,8 @@ void View::draw(const Model &model) {
         renderer,
         center.x,
         center.y,
-        center.x + model.player.rot_vec.x * 100,
-        center.y + model.player.rot_vec.y * 100
+        center.x + model.player.rot_vec.x * 10,
+        center.y + model.player.rot_vec.y * 10
     );
 
     cast_ray(model, 0, scale, transform);
