@@ -47,7 +47,7 @@ View::View() {
 
     buffer = SDL_CreateTexture(
         renderer,
-        SDL_PIXELFORMAT_RGB888,
+        SDL_PIXELFORMAT_RGBA32,
         SDL_TEXTUREACCESS_STREAMING,
         static_cast<int>(width),
         static_cast<int>(height)
