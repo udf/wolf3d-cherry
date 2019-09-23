@@ -169,24 +169,26 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
             std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
         }
 
+        auto check_cell = [&m, &hit](
+            ssize_t x, ssize_t y, const Texture *Cell::* tex_member
+        ) {
+            if (hit.tex)
+                return;
+            auto cell = m.get_cell(x, y);
+            if (cell)
+                hit.tex = cell->*tex_member;
+        };
+
         ssize_t mapNearX = mapX;
         ssize_t mapNearY = mapY;
         if (is_ns) {
             mapNearY -= stepY;
-            auto cell = m.get_cell(mapNearX, mapNearY);
-            if (cell)
-                hit.tex = cell->*ns_near_texture;
-            cell = m.get_cell(mapX, mapY);
-            if (cell)
-                hit.tex = cell->*ns_far_texture;
+            check_cell(mapNearX, mapNearY, ns_near_texture);
+            check_cell(mapX, mapY, ns_far_texture);
         } else {
             mapNearX -= stepX;
-            auto cell = m.get_cell(mapNearX, mapNearY);
-            if (cell)
-                hit.tex = cell->*ew_near_texture;
-            cell = m.get_cell(mapX, mapY);
-            if (cell)
-                hit.tex = cell->*ew_far_texture;
+            check_cell(mapNearX, mapNearY, ew_near_texture);
+            check_cell(mapX, mapY, ew_far_texture);
         }
 
         if (hit.tex)
