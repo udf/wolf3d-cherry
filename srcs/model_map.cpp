@@ -81,7 +81,7 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
             char direction = tokens[1].val[1];
             try {
                 c.player_rot = cardinal_angles.at(direction);
-            } catch (std::out_of_range) {
+            } catch (std::out_of_range &e) {
                 throw Exception("Unknown direction")
                     .set_hint(std::string(1, direction));
             }
