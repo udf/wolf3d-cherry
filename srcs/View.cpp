@@ -60,7 +60,7 @@ View::View() {
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
             auto p = texel(background_pixels.get(), width, x, y);
-            *p = SDL_MapRGB(buffer_format, 0, 0, 0);
+            *p = SDL_MapRGB(buffer_format, 50, 50, 50);
         }
     }
 }
@@ -272,7 +272,7 @@ void View::draw(const Model &model) {
         );
 
         for (size_t y = y_start; y < y_end; y++) {
-            *texel(pixels, width, x, y) = (uint32_t)reinterpret_cast<uintptr_t>(hit.tex);
+            *texel(pixels, width, x, y) = hit.tex->get_uint(0, 0);
         }
     }
 
