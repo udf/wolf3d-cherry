@@ -15,6 +15,7 @@ class Controller {
     Controller &operator=(const Controller &other) = delete;
 
     void process_input(uint32_t elapsed_ms);
+    void calculate_fps();
 
     View view;
 

@@ -38,7 +38,7 @@ View::View() {
         throw Exception("Failed to initialise SDL TTF")
             .set_hint(TTF_GetError());
     }
-    font = TTF_OpenFont("assets/fonts/CyberpunkWaifus.ttf", 32);
+    font = TTF_OpenFont("assets/fonts/CyberpunkWaifus.ttf", 16);
     if (!font) {
         throw Exception("Failed to load font")
             .set_hint(TTF_GetError());
@@ -178,6 +178,19 @@ void View::cast_ray(
         std::cout << std::endl;
 }
 
+void View::draw_text(const char *text, int x, int y) {
+    auto font_surface = TTF_RenderText_Solid(
+        font,
+        text,
+        {255, 255, 255, 0}
+    );
+    SDL_Rect src_rect = {x, y, font_surface->w, font_surface->h};
+    auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
+    SDL_FreeSurface(font_surface);
+    SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
+    SDL_DestroyTexture(font_tex);
+}
+
 void View::draw(const Model &model) {
     (void)model;
     uint32_t *pixels;
@@ -271,18 +284,15 @@ void View::draw(const Model &model) {
 
     cast_ray(model, 0, scale, transform);
 
-    // TODO: move this into a function
-    // auto font_surface = TTF_RenderText_Solid(
-    //     font,
-    //     "Hack me like you've never hacked anything before!!",
-    //     {255, 255, 255, 0}
-    // );
-    // auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
-    // SDL_FreeSurface(font_surface);
-    // SDL_Rect src_rect = {5, 5, 0, 0};
-    // SDL_QueryTexture(font_tex, NULL, NULL, &src_rect.w, &src_rect.h);
-    // SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
-    // SDL_DestroyTexture(font_tex);
+    uint32_t frame_time = SDL_GetTicks() - model.frame_start_ms;
 
+    std::stringstream ss;
+    ss << "fps: " << model.fps;
+    draw_text(ss.str().c_str(), 5, 5);
+    ss.str("");
+    ss << "frame time: " << frame_time << " ms";
+    draw_text(ss.str().c_str(), 5, 25);
+
+    // TODO: move this into a function
     SDL_RenderPresent(renderer);
 }

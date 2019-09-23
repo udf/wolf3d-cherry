@@ -46,16 +46,36 @@ void Controller::process_input(uint32_t elapsed_ms) {
     }
 }
 
+void Controller::calculate_fps() {
+    static uint32_t start_ms = 0;
+    static uint32_t frames = 0;
+    if (start_ms == 0) {
+        start_ms = SDL_GetTicks();
+        return;
+    }
+
+    frames += 1;
+    uint32_t cur_ms = SDL_GetTicks();
+    uint32_t elapsed_ms = cur_ms - start_ms;
+    if (elapsed_ms >= 1000) {
+        model.fps = frames;
+        std::cout << "fps: " << frames << std::endl;
+        frames = 0;
+        start_ms = cur_ms;
+    }
+}
+
 void Controller::run() {
-    uint32_t prev_ms = SDL_GetTicks();
+    model.frame_start_ms = SDL_GetTicks();
     while (running) {
-        uint32_t elapsed_ms = SDL_GetTicks() - prev_ms;
-        prev_ms = SDL_GetTicks();
+        uint32_t elapsed_ms = SDL_GetTicks() - model.frame_start_ms;
+        model.frame_start_ms = SDL_GetTicks();
 
         model.debug = false;
         process_input(elapsed_ms);
 
         // insert game logic here
+        calculate_fps();
 
         view.draw(model);
     }

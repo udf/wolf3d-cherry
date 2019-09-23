@@ -17,6 +17,7 @@ class View {
     View(const View &other) = delete;
     View &operator=(const View &other) = delete;
 
+    void draw_text(const char *text, int x, int y);
     void cast_ray(
         const Model &m,
         float camX,

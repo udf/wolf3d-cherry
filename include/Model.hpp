@@ -76,6 +76,8 @@ struct Model {
     size_t map_h = 0;
 
     bool debug;
+    uint32_t fps = 0;
+    uint32_t frame_start_ms = 0;
 
   private:
     Model(const Model &other) = delete;
