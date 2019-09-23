@@ -69,7 +69,7 @@ TextureStore::~TextureStore() {
 }
 
 const Texture *TextureStore::get(std::string short_name) const {
-    if (short_name == "__")
+    if (short_name == "__" || short_name == "--")
         return nullptr;
     try {
         return &textures.at(short_name);

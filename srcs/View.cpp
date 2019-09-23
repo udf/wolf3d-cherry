@@ -152,13 +152,13 @@ void View::cast_ray(
             std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
         }
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 0);
         rect.x = (float)mapX * scale + transform.x;
         rect.y = (float)mapY * scale + transform.y;
         SDL_RenderFillRectF(renderer, &rect);
 
         if (is_ns) {
-            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
             rect.x = (m.player.pos.x + sideDistY * rayDirX) * scale + transform.x;
             rect.y = (m.player.pos.y + sideDistY * rayDirY) * scale + transform.y;
         } else {
