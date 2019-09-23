@@ -59,7 +59,6 @@ void Controller::calculate_fps() {
     uint32_t elapsed_ms = cur_ms - start_ms;
     if (elapsed_ms >= 1000) {
         model.fps = frames;
-        std::cout << "fps: " << frames << std::endl;
         frames = 0;
         start_ms = cur_ms;
     }
