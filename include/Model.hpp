@@ -68,11 +68,14 @@ struct Model {
     };
 
     Player player;
+    Coord cam_rot_vec;
 
     static const std::unordered_map<char, float> cardinal_angles;
 
     size_t map_w = 0;
     size_t map_h = 0;
+
+    bool debug;
 
   private:
     Model(const Model &other) = delete;

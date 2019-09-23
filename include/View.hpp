@@ -17,6 +17,13 @@ class View {
     View(const View &other) = delete;
     View &operator=(const View &other) = delete;
 
+    void cast_ray(
+        const Model &m,
+        float camX,
+        float scale,
+        Model::Coord transform
+    );
+
     uint32_t width = 1366;
     uint32_t height = 768;
 

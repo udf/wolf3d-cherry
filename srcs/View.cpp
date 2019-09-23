@@ -76,6 +76,108 @@ View::~View() {
     SDL_Quit();
 }
 
+void View::cast_ray(
+    const Model &m,
+    float camX,
+    float scale,
+    Model::Coord transform
+) {
+    // Calculate ray direction
+    const float rayDirX = m.player.rot_vec.x + m.cam_rot_vec.x * camX;
+    const float rayDirY = m.player.rot_vec.y + m.cam_rot_vec.y * camX;
+
+    // Which cell of the map we're in
+    ssize_t mapX = (ssize_t)m.player.pos.x;
+    ssize_t mapY = (ssize_t)m.player.pos.y;
+
+    // Length of ray from current position to next side
+    float sideDistX, sideDistY;
+
+    // Length of ray from one side to next
+    const float deltaDistX = std::abs(1.0f / rayDirX);
+    const float deltaDistY = std::abs(1.0f / rayDirY);
+
+    // What direction to step in
+    ssize_t stepX, stepY;
+
+    // bool hit = false;
+    bool is_ns;
+
+    // Calculate step and initial sideDist
+    if (rayDirX < 0) {
+        stepX = -1;
+        sideDistX = (m.player.pos.x - (float)mapX) * deltaDistX;
+    } else {
+        stepX = 1;
+        sideDistX = ((float)mapX + 1.0f - m.player.pos.x) * deltaDistX;
+    }
+    if (rayDirY < 0) {
+        stepY = -1;
+        sideDistY = (m.player.pos.y - (float)mapY) * deltaDistY;
+    } else {
+        stepY = 1;
+        sideDistY = ((float)mapY + 1.0f - m.player.pos.y) * deltaDistY;
+    }
+
+    SDL_FRect rect = {0, 0, 2.f, 2.f};
+
+    if (m.debug) {
+        std::cout << "player data" << std::endl;
+        std::cout << "pos(" << m.player.pos.x << ", " << m.player.pos.y << ")" << std::endl;
+        std::cout << "ra " << m.player.rot << std::endl;
+        std::cout << "dir(" << m.player.rot_vec.x << ", " << m.player.rot_vec.y << ")" << std::endl;
+        std::cout << "cast data" << std::endl;
+        std::cout << "ray(" << rayDirX << ", " << rayDirY << ")" << std::endl;
+        std::cout << "delta(" << deltaDistX << ", " << deltaDistY << ")" << std::endl;
+        std::cout << "step(" << stepX << ", " << stepY << ")" << std::endl;
+        std::cout << "map(" << mapX << ", " << mapY << ")" << std::endl;
+        std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
+        std::cout << "loop start" << std::endl;
+    }
+
+    // Do the thing
+    // while(!hit) {
+    for (size_t i = 0; i < 2; i++) {
+        if (sideDistX < sideDistY) {
+            mapX += stepX;
+            is_ns = false;
+        } else {
+            mapY += stepY;
+            is_ns = true;
+        }
+
+        if (m.debug) {
+            std::cout << "is_ns " << is_ns << std::endl;
+            std::cout << "map(" << mapX << ", " << mapY << ")" << std::endl;
+            std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
+        }
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
+        rect.x = (float)mapX * scale + transform.x;
+        rect.y = (float)mapY * scale + transform.y;
+        SDL_RenderFillRectF(renderer, &rect);
+
+        if (is_ns) {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+            rect.x = (m.player.pos.x + sideDistY * rayDirX) * scale + transform.x;
+            rect.y = (m.player.pos.y + sideDistY * rayDirY) * scale + transform.y;
+        } else {
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
+            rect.x = (m.player.pos.x + sideDistX * rayDirX) * scale + transform.x;
+            rect.y = (m.player.pos.y + sideDistX * rayDirY) * scale + transform.y;
+        }
+        SDL_RenderFillRectF(renderer, &rect);
+
+        if (is_ns) {
+            sideDistY += deltaDistY;
+        } else {
+            sideDistX += deltaDistX;
+        }
+    }
+    if (m.debug)
+        std::cout << std::endl;
+}
+
 void View::draw(const Model &model) {
     (void)model;
     uint32_t *pixels;
@@ -163,10 +265,11 @@ void View::draw(const Model &model) {
         renderer,
         center.x,
         center.y,
-        center.x + model.player.rot_vec.x * 10,
-        center.y + model.player.rot_vec.y * 10
+        center.x + model.player.rot_vec.x * 100,
+        center.y + model.player.rot_vec.y * 100
     );
 
+    cast_ray(model, 0, scale, transform);
 
     // TODO: move this into a function
     // auto font_surface = TTF_RenderText_Solid(

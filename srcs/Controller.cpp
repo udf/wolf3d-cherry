@@ -18,6 +18,8 @@ void Controller::process_input(uint32_t elapsed_ms) {
         case SDL_KEYUP:
             if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                 running = false;
+            if (event.key.keysym.scancode == SDL_SCANCODE_F)
+                model.debug = true;
             break;
 
         default:
@@ -50,6 +52,7 @@ void Controller::run() {
         uint32_t elapsed_ms = SDL_GetTicks() - prev_ms;
         prev_ms = SDL_GetTicks();
 
+        model.debug = false;
         process_input(elapsed_ms);
 
         // insert game logic here
