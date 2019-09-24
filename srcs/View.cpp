@@ -77,8 +77,6 @@ View::~View() {
 }
 
 auto View::cast_ray(const Model &m, const Model::Coord ray_dir) -> RayHit {
-    // Calculate ray direction
-
     // Which cell of the map we're in
     Point<ssize_t> map = m.player.pos.cast_to<ssize_t>();
 
