@@ -152,10 +152,12 @@ auto View::cast_ray(const Model &m, const Model::Coord ray_dir) -> RayHit {
             mapNearY -= step.y;
             check_cell(mapNearX, mapNearY, ns_near_texture);
             check_cell(map.x, map.y, ns_far_texture);
+            hit.pos = m.player.pos + ray_dir * side_dist.y;
         } else {
             mapNearX -= step.x;
             check_cell(mapNearX, mapNearY, ew_near_texture);
             check_cell(map.x, map.y, ew_far_texture);
+            hit.pos = m.player.pos + ray_dir * side_dist.x;
         }
 
         if (hit.tex)
@@ -248,6 +250,21 @@ void View::draw_overlay(const Model &m) {
         center.y + m.player.rot_vec.y * 10
     );
 
+    // Draw first wall hit
+    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
+    auto hit = cast_ray(m, m.player.rot_vec);
+    if (hit.tex) {
+        rect.x = hit.pos.x * scale + transform.x;
+        rect.y = hit.pos.y * scale + transform.y;
+        SDL_RenderFillRectF(renderer, &rect);
+        SDL_RenderDrawLineF(
+            renderer,
+            center.x,
+            center.y,
+            rect.x,
+            rect.y
+        );
+    }
 }
 
 void View::draw(const Model &m) {

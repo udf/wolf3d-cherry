@@ -19,6 +19,7 @@ class View {
     struct RayHit {
         const Texture *tex = nullptr;
         float dist;
+        Model::Coord pos;
     };
 
     View(const View &other) = delete;
