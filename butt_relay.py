@@ -36,4 +36,4 @@ while True:
                 keyboard.release(content["key"])
 
         
-    sleep(0.05)
+    sleep(0.001)
