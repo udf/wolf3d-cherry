@@ -60,7 +60,7 @@ View::View() {
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
             auto p = texel(background_pixels.get(), width, x, y);
-            *p = SDL_MapRGB(buffer_format, 50, 50, 50);
+            *p = SDL_MapRGB(buffer_format, 150, 150, 150);
         }
     }
 }
