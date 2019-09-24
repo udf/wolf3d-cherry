@@ -92,6 +92,14 @@ class Point {
         return Point(this->x / val, this->y / val);
     }
 
+    template<typename U>
+    Point<U> cast_to() const {
+        return Point<U>(
+            static_cast<U>(x),
+            static_cast<U>(y)
+        );
+    }
+
     T x, y;
 
     using type = T;

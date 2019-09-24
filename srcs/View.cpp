@@ -81,8 +81,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
 
     // Which cell of the map we're in
-    ssize_t map_x = (ssize_t)m.player.pos.x;
-    ssize_t map_y = (ssize_t)m.player.pos.y;
+    Point<ssize_t> map = m.player.pos.cast_to<ssize_t>();
 
     // Length of ray from current position to next side
     float side_dist_x, side_dist_y;
@@ -106,7 +105,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     // Calculate step and initial sideDist
     if (ray_dir.x < 0) {
         step_x = -1;
-        side_dist_x = (m.player.pos.x - (float)map_x) * delta_dist_x;
+        side_dist_x = (m.player.pos.x - (float)map.x) * delta_dist_x;
         ew_near_texture = &Cell::wall_left;
         ew_far_texture = &Cell::wall_right;
         if (m.debug) {
@@ -114,7 +113,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         }
     } else {
         step_x = 1;
-        side_dist_x = ((float)map_x + 1.0f - m.player.pos.x) * delta_dist_x;
+        side_dist_x = ((float)map.x + 1.0f - m.player.pos.x) * delta_dist_x;
         ew_near_texture = &Cell::wall_right;
         ew_far_texture = &Cell::wall_left;
         if (m.debug) {
@@ -123,7 +122,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     }
     if (ray_dir.y < 0) {
         step_y = -1;
-        side_dist_y = (m.player.pos.y - (float)map_y) * delta_dist_y;
+        side_dist_y = (m.player.pos.y - (float)map.y) * delta_dist_y;
         ns_near_texture = &Cell::wall_top;
         ns_far_texture = &Cell::wall_bottom;
         if (m.debug) {
@@ -131,7 +130,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         }
     } else {
         step_y = 1;
-        side_dist_y = ((float)map_y + 1.0f - m.player.pos.y) * delta_dist_y;
+        side_dist_y = ((float)map.y + 1.0f - m.player.pos.y) * delta_dist_y;
         ns_near_texture = &Cell::wall_bottom;
         ns_far_texture = &Cell::wall_top;
         if (m.debug) {
@@ -144,7 +143,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         std::cout << "ray(" << ray_dir.x << ", " << ray_dir.y << ")" << std::endl;
         std::cout << "delta(" << delta_dist_x << ", " << delta_dist_y << ")" << std::endl;
         std::cout << "step(" << step_x << ", " << step_y << ")" << std::endl;
-        std::cout << "map(" << map_x << ", " << map_y << ")" << std::endl;
+        std::cout << "map(" << map.x << ", " << map.y << ")" << std::endl;
         std::cout << "side(" << side_dist_x << ", " << side_dist_y << ")" << std::endl;
         std::cout << "loop start" << std::endl;
     }
@@ -152,19 +151,19 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     // Do the thing
     size_t iters = 0;
     while(true) {
-        if (map_x < 0 || map_y < 0 || (size_t)map_x >= m.map_w || (size_t)map_y >= m.map_h)
+        if (map.x < 0 || map.y < 0 || (size_t)map.x >= m.map_w || (size_t)map.y >= m.map_h)
             break; // down and cry
         if (side_dist_x < side_dist_y) {
-            map_x += step_x;
+            map.x += step_x;
             is_ns = false;
         } else {
-            map_y += step_y;
+            map.y += step_y;
             is_ns = true;
         }
 
         if (m.debug) {
             std::cout << "is_ns " << is_ns << std::endl;
-            std::cout << "map(" << map_x << ", " << map_y << ")" << std::endl;
+            std::cout << "map(" << map.x << ", " << map.y << ")" << std::endl;
             std::cout << "side(" << side_dist_x << ", " << side_dist_y << ")" << std::endl;
         }
 
@@ -178,16 +177,16 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
                 hit.tex = cell->*tex_member;
         };
 
-        ssize_t mapNearX = map_x;
-        ssize_t mapNearY = map_y;
+        ssize_t mapNearX = map.x;
+        ssize_t mapNearY = map.y;
         if (is_ns) {
             mapNearY -= step_y;
             check_cell(mapNearX, mapNearY, ns_near_texture);
-            check_cell(map_x, map_y, ns_far_texture);
+            check_cell(map.x, map.y, ns_far_texture);
         } else {
             mapNearX -= step_x;
             check_cell(mapNearX, mapNearY, ew_near_texture);
-            check_cell(map_x, map_y, ew_far_texture);
+            check_cell(map.x, map.y, ew_far_texture);
         }
 
         if (hit.tex)
@@ -207,8 +206,8 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     if (hit.tex) {
         hit.dist = (
             is_ns
-            ? ((float)map_y - m.player.pos.y + (1.f - (float)step_y) / 2.f) / ray_dir.y
-            : ((float)map_x - m.player.pos.x + (1.f - (float)step_x) / 2.f) / ray_dir.x
+            ? ((float)map.y - m.player.pos.y + (1.f - (float)step_y) / 2.f) / ray_dir.y
+            : ((float)map.x - m.player.pos.x + (1.f - (float)step_x) / 2.f) / ray_dir.x
         );
     }
     return hit;
