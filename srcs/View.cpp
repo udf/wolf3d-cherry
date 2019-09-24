@@ -207,11 +207,12 @@ void View::draw(const Model &m) {
 		Model::Coord place = m.player.pos + (ray_dir * dist);
 		Pixel col((char)(fmod(place.x, 1.0f) * 255.0f), (char)(fmod(place.y, 1.0f) * 255.0f), 0, 255);
         	*texel(pixels, width, x, y) = col.get_int();
-        	*texel(pixels, width, x, height - y - 1) = col.get_int();
+        	*texel(pixels, width, x, height - y - 2) = col.get_int();
 	}
         if (hit.tex)
         for (; y < y_end; y++) {
-            *texel(pixels, width, x, y) = hit.tex->get_uint(0, 0);
+		Pixel col(0, (char)((float)(y - y_start) / (float)(y_end - y_start) * 255.0), 0, 255);
+            *texel(pixels, width, x, y) = col.get_int();//hit.tex->get_uint(0, 0);
 
         } 
     }
