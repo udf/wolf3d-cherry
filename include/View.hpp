@@ -28,8 +28,8 @@ class View {
     RayHit cast_ray(const Model &m, float camX);
     void draw_overlay(const Model &model);
 
-    uint32_t width = 1366;
-    uint32_t height = 768;
+    uint32_t width = 1000;
+    uint32_t height = 800;
 
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
