@@ -16,6 +16,20 @@ struct Pixel {
     uint8_t b;
     uint8_t a;
 
+    Pixel() {
+        r = 0;
+        g = 0;
+        b = 0;
+        a = 0;
+    }
+
+    Pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+        this->r = r;
+        this->g = g;
+        this->b = b;
+        this->a = a;
+    }
+
     uint32_t get_int() const {
         return reinterpret_cast<const uint32_t &>(*this);
     }
