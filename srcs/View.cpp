@@ -92,7 +92,10 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     };
 
     // What direction to step in
-    Point<ssize_t> step;
+    const Point<ssize_t> step = {
+        ray_dir.x < 0 ? -1 : 1,
+        ray_dir.y < 0 ? -1 : 1
+    };
 
     RayHit hit;
     bool is_ns = false;
@@ -103,9 +106,8 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     const Texture *Cell::* ns_near_texture;
     const Texture *Cell::* ns_far_texture;
 
-    // Calculate step and initial sideDist
+    // Calculate initial sideDist
     if (ray_dir.x < 0) {
-        step.x = -1;
         side_dist.x = (m.player.pos.x - (float)map.x) * delta_dist.x;
         ew_near_texture = &Cell::wall_left;
         ew_far_texture = &Cell::wall_right;
@@ -113,7 +115,6 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
             std::cout << "left right" << std::endl;
         }
     } else {
-        step.x = 1;
         side_dist.x = ((float)map.x + 1.0f - m.player.pos.x) * delta_dist.x;
         ew_near_texture = &Cell::wall_right;
         ew_far_texture = &Cell::wall_left;
@@ -122,7 +123,6 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         }
     }
     if (ray_dir.y < 0) {
-        step.y = -1;
         side_dist.y = (m.player.pos.y - (float)map.y) * delta_dist.y;
         ns_near_texture = &Cell::wall_top;
         ns_far_texture = &Cell::wall_bottom;
@@ -130,7 +130,6 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
             std::cout << "top bottom" << std::endl;
         }
     } else {
-        step.y = 1;
         side_dist.y = ((float)map.y + 1.0f - m.player.pos.y) * delta_dist.y;
         ns_near_texture = &Cell::wall_bottom;
         ns_far_texture = &Cell::wall_top;
