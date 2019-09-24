@@ -15,6 +15,10 @@ struct Pixel {
     uint8_t g;
     uint8_t b;
     uint8_t a;
+
+    uint32_t get_int() const {
+        return reinterpret_cast<const uint32_t &>(*this);
+    }
 };
 
 static_assert(sizeof(Pixel) == sizeof(uint32_t));
@@ -32,7 +36,7 @@ struct Texture {
     }
 
     uint32_t get_uint(size_t x, size_t y) const {
-        return reinterpret_cast<const uint32_t &>(*get(x, y));
+        return get(x, y)->get_int();
     }
 };
 
