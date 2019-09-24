@@ -228,8 +228,66 @@ void View::draw_text(const char *text, int x, int y) {
     SDL_DestroyTexture(font_tex);
 }
 
-void View::draw(const Model &model) {
-    (void)model;
+void View::draw_overlay(const Model &m) {
+    // Compute a vector to center everything around the player
+    Model::Coord center = Model::Coord(
+        static_cast<float>(width) / 2.f,
+        static_cast<float>(height) / 2.f
+    );
+
+    const Model::Coord::type scale = 50.f;
+    Model::Coord transform = center - m.player.pos * scale;
+
+    const auto draw_scaled_line = [&](auto x1, auto y1, auto x2, auto y2) {
+        Model::Coord p1 = {(float)x1, (float)y1};
+        Model::Coord p2 = {(float)x2, (float)y2};
+        p1 *= scale;
+        p1 += transform;
+        p2 *= scale;
+        p2 += transform;
+        SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
+    };
+
+    // draw map grid
+    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 0);
+    for (size_t x = 0; x <= m.map_w; x++) {
+        draw_scaled_line(x, 0, x, m.map_h);
+    }
+    for (size_t y = 0; y <= m.map_h; y++) {
+        draw_scaled_line(0, y, m.map_w, y);
+    }
+
+    // draw walls
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    for (size_t x = 0; x < m.map_w; x++) {
+        for (size_t y = 0; y < m.map_h; y++) {
+            auto cell = m.get_cell((ssize_t)x, (ssize_t)y);
+            if (cell->wall_top)
+                draw_scaled_line(x, y, x + 1, y);
+            if (cell->wall_bottom)
+                draw_scaled_line(x, y + 1, x + 1, y + 1);
+            if (cell->wall_left)
+                draw_scaled_line(x, y, x, y + 1);
+            if (cell->wall_right)
+                draw_scaled_line(x + 1, y, x + 1, y + 1);
+        }
+    }
+
+    // draw player
+    SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+    SDL_RenderFillRectF(renderer, &rect);
+    SDL_RenderDrawLineF(
+        renderer,
+        center.x,
+        center.y,
+        center.x + m.player.rot_vec.x * 10,
+        center.y + m.player.rot_vec.y * 10
+    );
+
+}
+
+void View::draw(const Model &m) {
     uint32_t *pixels;
     int pitch;
 
@@ -247,18 +305,18 @@ void View::draw(const Model &model) {
         sizeof(uint32_t) * width * height
     );
 
-    if (model.debug) {
+    if (m.debug) {
         std::cout << "player data" << std::endl;
-        std::cout << "pos(" << model.player.pos.x << ", " << model.player.pos.y << ")" << std::endl;
-        std::cout << "ra " << model.player.rot << std::endl;
-        std::cout << "dir(" << model.player.rot_vec.x << ", " << model.player.rot_vec.y << ")" << std::endl;
+        std::cout << "pos(" << m.player.pos.x << ", " << m.player.pos.y << ")" << std::endl;
+        std::cout << "ra " << m.player.rot << std::endl;
+        std::cout << "dir(" << m.player.rot_vec.x << ", " << m.player.rot_vec.y << ")" << std::endl;
     }
     for (uint32_t x = 0; x < width; x++) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
-        if (model.debug) {
+        if (m.debug) {
             std::cout << camX << std::endl;
         }
-        auto hit = cast_ray(model, camX);
+        auto hit = cast_ray(m, camX);
         if (!hit.tex)
             continue;
         float line_height = (float)height / hit.dist;
@@ -281,66 +339,12 @@ void View::draw(const Model &model) {
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    // Compute a vector to center everything around the player
-    Model::Coord center = Model::Coord(
-        static_cast<float>(width) / 2.f,
-        static_cast<float>(height) / 2.f
-    );
+    draw_overlay(m);
 
-    const Model::Coord::type scale = 50.f;
-    Model::Coord transform = center - model.player.pos * scale;
-
-    const auto draw_scaled_line = [&](auto x1, auto y1, auto x2, auto y2) {
-        Model::Coord p1 = {(float)x1, (float)y1};
-        Model::Coord p2 = {(float)x2, (float)y2};
-        p1 *= scale;
-        p1 += transform;
-        p2 *= scale;
-        p2 += transform;
-        SDL_RenderDrawLineF(renderer, p1.x, p1.y, p2.x, p2.y);
-    };
-
-    // draw map grid
-    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 0);
-    for (size_t x = 0; x <= model.map_w; x++) {
-        draw_scaled_line(x, 0, x, model.map_h);
-    }
-    for (size_t y = 0; y <= model.map_h; y++) {
-        draw_scaled_line(0, y, model.map_w, y);
-    }
-
-    // draw walls
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    for (size_t x = 0; x < model.map_w; x++) {
-        for (size_t y = 0; y < model.map_h; y++) {
-            auto cell = model.get_cell((ssize_t)x, (ssize_t)y);
-            if (cell->wall_top)
-                draw_scaled_line(x, y, x + 1, y);
-            if (cell->wall_bottom)
-                draw_scaled_line(x, y + 1, x + 1, y + 1);
-            if (cell->wall_left)
-                draw_scaled_line(x, y, x, y + 1);
-            if (cell->wall_right)
-                draw_scaled_line(x + 1, y, x + 1, y + 1);
-        }
-    }
-
-    // draw player
-    SDL_FRect rect = {center.x - 1.f, center.y - 1.f, 2.f, 2.f};
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-    SDL_RenderFillRectF(renderer, &rect);
-    SDL_RenderDrawLineF(
-        renderer,
-        center.x,
-        center.y,
-        center.x + model.player.rot_vec.x * 10,
-        center.y + model.player.rot_vec.y * 10
-    );
-
-    uint32_t frame_time = SDL_GetTicks() - model.frame_start_ms;
+    uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
 
     std::stringstream ss;
-    ss << "fps: " << model.fps;
+    ss << "fps: " << m.fps;
     draw_text(ss.str().c_str(), 5, 5);
     ss.str("");
     ss << "frame time: " << frame_time << " ms";

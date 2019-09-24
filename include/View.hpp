@@ -26,6 +26,7 @@ class View {
 
     void draw_text(const char *text, int x, int y);
     RayHit cast_ray(const Model &m, float camX);
+    void draw_overlay(const Model &model);
 
     uint32_t width = 1366;
     uint32_t height = 768;
