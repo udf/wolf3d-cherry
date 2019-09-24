@@ -78,8 +78,7 @@ View::~View() {
 
 auto View::cast_ray(const Model &m, float camX) -> RayHit {
     // Calculate ray direction
-    const float ray_dir_x = m.player.rot_vec.x + m.cam_rot_vec.x * camX;
-    const float ray_dir_y = m.player.rot_vec.y + m.cam_rot_vec.y * camX;
+    const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
 
     // Which cell of the map we're in
     ssize_t map_x = (ssize_t)m.player.pos.x;
@@ -89,8 +88,8 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     float side_dist_x, side_dist_y;
 
     // Length of ray from one side to next
-    const float delta_dist_x = std::abs(1.0f / ray_dir_x);
-    const float delta_dist_y = std::abs(1.0f / ray_dir_y);
+    const float delta_dist_x = std::abs(1.0f / ray_dir.x);
+    const float delta_dist_y = std::abs(1.0f / ray_dir.y);
 
     // What direction to step in
     ssize_t step_x, step_y;
@@ -105,7 +104,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     const Texture *Cell::* ns_far_texture;
 
     // Calculate step and initial sideDist
-    if (ray_dir_x < 0) {
+    if (ray_dir.x < 0) {
         step_x = -1;
         side_dist_x = (m.player.pos.x - (float)map_x) * delta_dist_x;
         ew_near_texture = &Cell::wall_left;
@@ -122,7 +121,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
             std::cout << "right left" << std::endl;
         }
     }
-    if (ray_dir_y < 0) {
+    if (ray_dir.y < 0) {
         step_y = -1;
         side_dist_y = (m.player.pos.y - (float)map_y) * delta_dist_y;
         ns_near_texture = &Cell::wall_top;
@@ -142,7 +141,7 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
 
     if (m.debug) {
         std::cout << "cast data" << std::endl;
-        std::cout << "ray(" << ray_dir_x << ", " << ray_dir_y << ")" << std::endl;
+        std::cout << "ray(" << ray_dir.x << ", " << ray_dir.y << ")" << std::endl;
         std::cout << "delta(" << delta_dist_x << ", " << delta_dist_y << ")" << std::endl;
         std::cout << "step(" << step_x << ", " << step_y << ")" << std::endl;
         std::cout << "map(" << map_x << ", " << map_y << ")" << std::endl;
@@ -208,8 +207,8 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     if (hit.tex) {
         hit.dist = (
             is_ns
-            ? ((float)map_y - m.player.pos.y + (1.f - (float)step_y) / 2.f) / ray_dir_y
-            : ((float)map_x - m.player.pos.x + (1.f - (float)step_x) / 2.f) / ray_dir_x
+            ? ((float)map_y - m.player.pos.y + (1.f - (float)step_y) / 2.f) / ray_dir.y
+            : ((float)map_x - m.player.pos.x + (1.f - (float)step_x) / 2.f) / ray_dir.x
         );
     }
     return hit;
