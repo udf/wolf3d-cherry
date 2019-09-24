@@ -16,6 +16,10 @@ float fmapf(float n, float s1, float e1, float s2, float e2) {
 	return (s2 + (e2 - s2) * ((n - s1) / (e1 - s1)));
 }
 
+float square(float val) {
+    return val * val;
+}
+
 float comp_euc_dist(Point<float> p1, Point<float> p2) {
-    return std::sqrt(p1.x - p2.x) + std::sqrt(p1.y - p2.y);
+    return square(p1.x - p2.x) + square(p1.y - p2.y);
 }
