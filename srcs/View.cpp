@@ -191,28 +191,27 @@ void View::draw(const Model &m) {
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hit = m.cast_ray(ray_dir);
         float line_height = (float)height / hit.dist;
-        size_t y_start = (size_t)std::clamp(
-            (float)height / 2.f - line_height / 2.f,
-            0.f,
-            (float)(height - 1)
-        );
-        size_t y_end = (size_t)std::clamp(
-            (float)height / 2.f + line_height / 2.f,
-            0.f,
-            (float)(height - 1)
-        );
-	size_t y;
+        ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
+        ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
+	ssize_t y;
 	for (y = 0; y < y_start; y++) {
 		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
 		Model::Coord place = m.player.pos + (ray_dir * dist);
-		Pixel col((char)(fmod(place.x, 1.0f) * 255.0f), (char)(fmod(place.y, 1.0f) * 255.0f), 0, 255);
-        	*texel(pixels, width, x, y) = col.get_int();
-        	*texel(pixels, width, x, height - y - 2) = col.get_int();
+		int tx = (int)(fmod(place.x, 1.0f));
+		int ty = (int)(fmod(place.y, 1.0f));
+		auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
+		if (!cell)
+			continue;
+		if (cell->ceil)
+	        	*texel(pixels, width, x, y) = cell->ceil->get_uint(tx, ty);
+		if (cell->floor)
+	        	*texel(pixels, width, x, height - y - 2) = cell->floor->get_uint(tx, ty);
 	}
         if (hit.tex)
-        for (; y < y_end; y++) {
-		Pixel col(0, (char)((float)(y - y_start) / (float)(y_end - y_start) * 255.0), 0, 255);
-            *texel(pixels, width, x, y) = col.get_int();//hit.tex->get_uint(0, 0);
+        for (; y < y_end && y < (ssize_t)height; y++) {
+		int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? fmod(hit.pos.x, 1.0f) : 1 - fmod(hit.pos.x, 1.0f)) :  (ray_dir.x > 0 ? fmod(hit.pos.y, 1.0f) : 1 - fmod(hit.pos.y, 1.0f)))) * (float)hit.tex->w);
+		int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)hit.tex->h);
+        	*texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
 
         } 
     }
