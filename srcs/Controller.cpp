@@ -28,23 +28,26 @@ void Controller::process_input(uint32_t elapsed_ms) {
     }
 
     const uint8_t *state = SDL_GetKeyboardState(NULL);
-    auto elapsed_sec = static_cast<Model::Coord::type>(elapsed_ms) / 1000.f;
+    const auto elapsed_sec = static_cast<Model::Coord::type>(elapsed_ms) / 1000.f;
+    const float move_thrust = elapsed_sec * 1.5f;
+    const float rot_thrust = elapsed_sec * 180.f;
 
-    if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_RIGHT]) {
-        auto thrust = elapsed_sec * 180.f;
-        if (state[SDL_SCANCODE_LEFT])
-            thrust *= -1;
-        model.player.rot += thrust;
+    if (state[SDL_SCANCODE_LEFT]) {
+        model.player.rot -= rot_thrust;
     }
+    if (state[SDL_SCANCODE_RIGHT]) {
+        model.player.rot += rot_thrust;
+    }
+
     model.player.rot_vec = {cos_d(model.player.rot), sin_d(model.player.rot)};
     const float cam_rot = model.player.rot - 90.f;
     model.cam_rot_vec = {cos_d(cam_rot), sin_d(cam_rot)};
 
-    if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_DOWN]) {
-        auto thrust = elapsed_sec * 1.5f;
-        if (state[SDL_SCANCODE_DOWN])
-            thrust *= -1;
-        model.player.pos += model.player.rot_vec * thrust;
+    if (state[SDL_SCANCODE_UP]) {
+        model.player.pos += model.player.rot_vec * move_thrust;
+    }
+    if (state[SDL_SCANCODE_DOWN]) {
+        model.player.pos -= model.player.rot_vec * move_thrust;
     }
 }
 
