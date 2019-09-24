@@ -76,9 +76,8 @@ View::~View() {
     SDL_Quit();
 }
 
-auto View::cast_ray(const Model &m, float camX) -> RayHit {
+auto View::cast_ray(const Model &m, const Model::Coord ray_dir) -> RayHit {
     // Calculate ray direction
-    const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
 
     // Which cell of the map we're in
     Point<ssize_t> map = m.player.pos.cast_to<ssize_t>();
@@ -279,10 +278,11 @@ void View::draw(const Model &m) {
     }
     for (uint32_t x = 0; x < width; x++) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
+        const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         if (m.debug) {
             std::cout << camX << std::endl;
         }
-        auto hit = cast_ray(m, camX);
+        auto hit = cast_ray(m, ray_dir);
         if (!hit.tex)
             continue;
         float line_height = (float)height / hit.dist;

@@ -25,7 +25,7 @@ class View {
     View &operator=(const View &other) = delete;
 
     void draw_text(const char *text, int x, int y);
-    RayHit cast_ray(const Model &m, float camX);
+    RayHit cast_ray(const Model &m, const Model::Coord ray_dir);
     void draw_overlay(const Model &model);
 
     uint32_t width = 1000;
