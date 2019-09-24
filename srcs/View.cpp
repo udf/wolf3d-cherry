@@ -190,8 +190,6 @@ void View::draw(const Model &m) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hit = m.cast_ray(ray_dir);
-        if (!hit.tex)
-            continue;
         float line_height = (float)height / hit.dist;
         size_t y_start = (size_t)std::clamp(
             (float)height / 2.f - line_height / 2.f,
@@ -203,10 +201,19 @@ void View::draw(const Model &m) {
             0.f,
             (float)(height - 1)
         );
-
-        for (size_t y = y_start; y < y_end; y++) {
+	size_t y;
+	for (y = 0; y < y_start; y++) {
+		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
+		Model::Coord place = m.player.pos + (ray_dir * dist);
+		Pixel col((char)(fmod(place.x, 1.0f) * 255.0f), (char)(fmod(place.y, 1.0f) * 255.0f), 0, 255);
+        	*texel(pixels, width, x, y) = col.get_int();
+        	*texel(pixels, width, x, height - y - 1) = col.get_int();
+	}
+        if (hit.tex)
+        for (; y < y_end; y++) {
             *texel(pixels, width, x, y) = hit.tex->get_uint(0, 0);
-        }
+
+        } 
     }
 
     SDL_UnlockTexture(buffer);
