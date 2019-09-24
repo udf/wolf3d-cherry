@@ -43,12 +43,20 @@ void Controller::process_input(uint32_t elapsed_ms) {
     const float cam_rot = model.player.rot - 90.f;
     model.cam_rot_vec = {cos_d(cam_rot), sin_d(cam_rot)};
 
+    auto new_pos = model.player.pos;
     if (state[SDL_SCANCODE_UP]) {
-        model.player.pos += model.player.rot_vec * move_thrust;
+        new_pos += model.player.rot_vec * move_thrust;
     }
     if (state[SDL_SCANCODE_DOWN]) {
-        model.player.pos -= model.player.rot_vec * move_thrust;
+        new_pos -= model.player.rot_vec * move_thrust;
     }
+
+    auto hit = model.cast_ray(model.player.rot_vec);
+    auto hit_dist = comp_euc_dist(model.player.pos, hit.pos);
+    auto new_dist = comp_euc_dist(model.player.pos, new_pos);
+    if (new_dist >= hit_dist)
+        new_pos = hit.pos - model.player.rot_vec * 0.01f;
+    model.player.pos = new_pos;
 }
 
 void Controller::calculate_fps() {
