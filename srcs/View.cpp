@@ -78,22 +78,22 @@ View::~View() {
 
 auto View::cast_ray(const Model &m, float camX) -> RayHit {
     // Calculate ray direction
-    const float rayDirX = m.player.rot_vec.x + m.cam_rot_vec.x * camX;
-    const float rayDirY = m.player.rot_vec.y + m.cam_rot_vec.y * camX;
+    const float ray_dir_x = m.player.rot_vec.x + m.cam_rot_vec.x * camX;
+    const float ray_dir_y = m.player.rot_vec.y + m.cam_rot_vec.y * camX;
 
     // Which cell of the map we're in
-    ssize_t mapX = (ssize_t)m.player.pos.x;
-    ssize_t mapY = (ssize_t)m.player.pos.y;
+    ssize_t map_x = (ssize_t)m.player.pos.x;
+    ssize_t map_y = (ssize_t)m.player.pos.y;
 
     // Length of ray from current position to next side
-    float sideDistX, sideDistY;
+    float side_dist_x, side_dist_y;
 
     // Length of ray from one side to next
-    const float deltaDistX = std::abs(1.0f / rayDirX);
-    const float deltaDistY = std::abs(1.0f / rayDirY);
+    const float delta_dist_x = std::abs(1.0f / ray_dir_x);
+    const float delta_dist_y = std::abs(1.0f / ray_dir_y);
 
     // What direction to step in
-    ssize_t stepX, stepY;
+    ssize_t step_x, step_y;
 
     RayHit hit;
     bool is_ns = false;
@@ -105,34 +105,34 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     const Texture *Cell::* ns_far_texture;
 
     // Calculate step and initial sideDist
-    if (rayDirX < 0) {
-        stepX = -1;
-        sideDistX = (m.player.pos.x - (float)mapX) * deltaDistX;
+    if (ray_dir_x < 0) {
+        step_x = -1;
+        side_dist_x = (m.player.pos.x - (float)map_x) * delta_dist_x;
         ew_near_texture = &Cell::wall_left;
         ew_far_texture = &Cell::wall_right;
         if (m.debug) {
             std::cout << "left right" << std::endl;
         }
     } else {
-        stepX = 1;
-        sideDistX = ((float)mapX + 1.0f - m.player.pos.x) * deltaDistX;
+        step_x = 1;
+        side_dist_x = ((float)map_x + 1.0f - m.player.pos.x) * delta_dist_x;
         ew_near_texture = &Cell::wall_right;
         ew_far_texture = &Cell::wall_left;
         if (m.debug) {
             std::cout << "right left" << std::endl;
         }
     }
-    if (rayDirY < 0) {
-        stepY = -1;
-        sideDistY = (m.player.pos.y - (float)mapY) * deltaDistY;
+    if (ray_dir_y < 0) {
+        step_y = -1;
+        side_dist_y = (m.player.pos.y - (float)map_y) * delta_dist_y;
         ns_near_texture = &Cell::wall_top;
         ns_far_texture = &Cell::wall_bottom;
         if (m.debug) {
             std::cout << "top bottom" << std::endl;
         }
     } else {
-        stepY = 1;
-        sideDistY = ((float)mapY + 1.0f - m.player.pos.y) * deltaDistY;
+        step_y = 1;
+        side_dist_y = ((float)map_y + 1.0f - m.player.pos.y) * delta_dist_y;
         ns_near_texture = &Cell::wall_bottom;
         ns_far_texture = &Cell::wall_top;
         if (m.debug) {
@@ -142,31 +142,31 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
 
     if (m.debug) {
         std::cout << "cast data" << std::endl;
-        std::cout << "ray(" << rayDirX << ", " << rayDirY << ")" << std::endl;
-        std::cout << "delta(" << deltaDistX << ", " << deltaDistY << ")" << std::endl;
-        std::cout << "step(" << stepX << ", " << stepY << ")" << std::endl;
-        std::cout << "map(" << mapX << ", " << mapY << ")" << std::endl;
-        std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
+        std::cout << "ray(" << ray_dir_x << ", " << ray_dir_y << ")" << std::endl;
+        std::cout << "delta(" << delta_dist_x << ", " << delta_dist_y << ")" << std::endl;
+        std::cout << "step(" << step_x << ", " << step_y << ")" << std::endl;
+        std::cout << "map(" << map_x << ", " << map_y << ")" << std::endl;
+        std::cout << "side(" << side_dist_x << ", " << side_dist_y << ")" << std::endl;
         std::cout << "loop start" << std::endl;
     }
 
     // Do the thing
     size_t iters = 0;
     while(true) {
-        if (mapX < 0 || mapY < 0 || (size_t)mapX >= m.map_w || (size_t)mapY >= m.map_h)
+        if (map_x < 0 || map_y < 0 || (size_t)map_x >= m.map_w || (size_t)map_y >= m.map_h)
             break; // down and cry
-        if (sideDistX < sideDistY) {
-            mapX += stepX;
+        if (side_dist_x < side_dist_y) {
+            map_x += step_x;
             is_ns = false;
         } else {
-            mapY += stepY;
+            map_y += step_y;
             is_ns = true;
         }
 
         if (m.debug) {
             std::cout << "is_ns " << is_ns << std::endl;
-            std::cout << "map(" << mapX << ", " << mapY << ")" << std::endl;
-            std::cout << "side(" << sideDistX << ", " << sideDistY << ")" << std::endl;
+            std::cout << "map(" << map_x << ", " << map_y << ")" << std::endl;
+            std::cout << "side(" << side_dist_x << ", " << side_dist_y << ")" << std::endl;
         }
 
         auto check_cell = [&m, &hit](
@@ -179,25 +179,25 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
                 hit.tex = cell->*tex_member;
         };
 
-        ssize_t mapNearX = mapX;
-        ssize_t mapNearY = mapY;
+        ssize_t mapNearX = map_x;
+        ssize_t mapNearY = map_y;
         if (is_ns) {
-            mapNearY -= stepY;
+            mapNearY -= step_y;
             check_cell(mapNearX, mapNearY, ns_near_texture);
-            check_cell(mapX, mapY, ns_far_texture);
+            check_cell(map_x, map_y, ns_far_texture);
         } else {
-            mapNearX -= stepX;
+            mapNearX -= step_x;
             check_cell(mapNearX, mapNearY, ew_near_texture);
-            check_cell(mapX, mapY, ew_far_texture);
+            check_cell(map_x, map_y, ew_far_texture);
         }
 
         if (hit.tex)
             break;
 
         if (is_ns) {
-            sideDistY += deltaDistY;
+            side_dist_y += delta_dist_y;
         } else {
-            sideDistX += deltaDistX;
+            side_dist_x += delta_dist_x;
         }
         iters++;
     }
@@ -208,8 +208,8 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
     if (hit.tex) {
         hit.dist = (
             is_ns
-            ? ((float)mapY - m.player.pos.y + (1.f - (float)stepY) / 2.f) / rayDirY
-            : ((float)mapX - m.player.pos.x + (1.f - (float)stepX) / 2.f) / rayDirX
+            ? ((float)map_y - m.player.pos.y + (1.f - (float)step_y) / 2.f) / ray_dir_y
+            : ((float)map_x - m.player.pos.x + (1.f - (float)step_x) / 2.f) / ray_dir_x
         );
     }
     return hit;
