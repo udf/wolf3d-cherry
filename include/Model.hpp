@@ -51,15 +51,21 @@ struct ParsedCell {
 };
 
 struct Model {
+    // TODO: check if fixed point is faster on pi
+    using Coord = Point<float>;
+    struct RayHit {
+        const Texture *tex = nullptr;
+        float dist;
+        Model::Coord pos;
+    };
+
     Model() {
     }
 
     void load_map(std::string filename);
     Cell *get_cell(ssize_t x, ssize_t y);
     const Cell *get_cell(ssize_t x, ssize_t y) const;
-
-    // TODO: check if fixed point is faster on pi
-    using Coord = Point<float>;
+    RayHit cast_ray(const Model::Coord ray_dir) const;
 
     struct Player {
         Coord pos = Coord(0, 0);
