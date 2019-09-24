@@ -111,41 +111,19 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         side_dist.x = (m.player.pos.x - (float)map.x) * delta_dist.x;
         ew_near_texture = &Cell::wall_left;
         ew_far_texture = &Cell::wall_right;
-        if (m.debug) {
-            std::cout << "left right" << std::endl;
-        }
     } else {
         side_dist.x = ((float)map.x + 1.0f - m.player.pos.x) * delta_dist.x;
         ew_near_texture = &Cell::wall_right;
         ew_far_texture = &Cell::wall_left;
-        if (m.debug) {
-            std::cout << "right left" << std::endl;
-        }
     }
     if (ray_dir.y < 0) {
         side_dist.y = (m.player.pos.y - (float)map.y) * delta_dist.y;
         ns_near_texture = &Cell::wall_top;
         ns_far_texture = &Cell::wall_bottom;
-        if (m.debug) {
-            std::cout << "top bottom" << std::endl;
-        }
     } else {
         side_dist.y = ((float)map.y + 1.0f - m.player.pos.y) * delta_dist.y;
         ns_near_texture = &Cell::wall_bottom;
         ns_far_texture = &Cell::wall_top;
-        if (m.debug) {
-            std::cout << "bottom top" << std::endl;
-        }
-    }
-
-    if (m.debug) {
-        std::cout << "cast data" << std::endl;
-        std::cout << "ray(" << ray_dir.x << ", " << ray_dir.y << ")" << std::endl;
-        std::cout << "delta(" << delta_dist.x << ", " << delta_dist.y << ")" << std::endl;
-        std::cout << "step(" << step.x << ", " << step.y << ")" << std::endl;
-        std::cout << "map(" << map.x << ", " << map.y << ")" << std::endl;
-        std::cout << "side(" << side_dist.x << ", " << side_dist.y << ")" << std::endl;
-        std::cout << "loop start" << std::endl;
     }
 
     // Do the thing
@@ -159,12 +137,6 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
         } else {
             map.y += step.y;
             is_ns = true;
-        }
-
-        if (m.debug) {
-            std::cout << "is_ns " << is_ns << std::endl;
-            std::cout << "map(" << map.x << ", " << map.y << ")" << std::endl;
-            std::cout << "side(" << side_dist.x << ", " << side_dist.y << ")" << std::endl;
         }
 
         auto check_cell = [&m, &hit](
@@ -198,10 +170,6 @@ auto View::cast_ray(const Model &m, float camX) -> RayHit {
             side_dist.x += delta_dist.x;
         }
         iters++;
-    }
-    if (m.debug) {
-        std::cout << "iters: " << iters << std::endl;
-        std::cout << std::endl;
     }
     if (hit.tex) {
         hit.dist = (
