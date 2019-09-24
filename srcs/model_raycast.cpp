@@ -19,7 +19,6 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
     };
 
     RayHit hit;
-    bool is_ns = false;
 
     // Which wall to check for the near and far cell
     const Texture *Cell::* ew_near_texture;
@@ -54,10 +53,10 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
             break; // down and cry
         if (side_dist.x < side_dist.y) {
             map.x += step.x;
-            is_ns = false;
+            hit.is_ns = false;
         } else {
             map.y += step.y;
-            is_ns = true;
+            hit.is_ns = true;
         }
 
         auto check_cell = [this, &hit](
@@ -72,7 +71,7 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
 
         ssize_t mapNearX = map.x;
         ssize_t mapNearY = map.y;
-        if (is_ns) {
+        if (hit.is_ns) {
             mapNearY -= step.y;
             check_cell(mapNearX, mapNearY, ns_near_texture);
             check_cell(map.x, map.y, ns_far_texture);
@@ -87,7 +86,7 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
         if (hit.tex)
             break;
 
-        if (is_ns) {
+        if (hit.is_ns) {
             side_dist.y += delta_dist.y;
         } else {
             side_dist.x += delta_dist.x;
@@ -96,7 +95,7 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
     }
     if (hit.tex) {
         hit.dist = (
-            is_ns
+            hit.is_ns
             ? ((float)map.y - player.pos.y + (1.f - (float)step.y) / 2.f) / ray_dir.y
             : ((float)map.x - player.pos.x + (1.f - (float)step.x) / 2.f) / ray_dir.x
         );

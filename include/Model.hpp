@@ -57,6 +57,7 @@ struct Model {
         const Texture *tex = nullptr;
         float dist;
         Model::Coord pos;
+        bool is_ns;
     };
 
     Model() {
