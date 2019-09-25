@@ -4,12 +4,31 @@
 
 const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"W1", "walls/Bricks.png"},
+    {"W2", "walls/BlueWall.png"},
+    {"W3", "walls/WhiteWall.png"},
+    {"W4", "walls/DarkBricks.png"},
     {"V1", "walls/Window1.png"},
     {"V2", "walls/CoveredWindow1.png"},
-    {"W2", "walls/BlueWall.png"},
-    {"W3", "walls/WTC.png"},
+    {"V3", "walls/Window2.png"},
+    {"V4", "walls/CoveredWindow2.png"},
+    {"V5", "walls/Window3.png"},
+    {"V6", "walls/CoveredWindow3.png"},
     {"C1", "ceilings/Blue_ceiling.png"},
     {"C2", "ceilings/concrete_ceiling1.png"},
+    {"F1", "floors/concrete_floor1.png"},
+    {"F2", "floors/concrete_floor2.png"},
+    {"F3", "floors/DarkTiles.png"},
+    {"F4", "floors/Tiles.png"},
+    {"F5", "floors/Wood1.png"},
+    {"F6", "floors/Wood1Test.png"},
+    {"F7", "floors/Wood1Test2.png"},
+    {"F8", "floors/Wood1Test3.png"},
+    {"F9", "floors/Wood2.png"},
+    {"D1", "fuck.png"},
+    {"D2", "fuck.png"},
+    {"G1", "fuck.png"},
+    {"H1", "halves/WTC1.png"},
+    {"H2", "halves/WTC2.png"}
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
