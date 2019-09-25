@@ -23,3 +23,7 @@ float square(float val) {
 float comp_euc_dist(Point<float> p1, Point<float> p2) {
     return square(p1.x - p2.x) + square(p1.y - p2.y);
 }
+
+float frac(float val) {
+    return val - (float)((int)val);
+}
