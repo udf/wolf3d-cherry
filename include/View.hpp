@@ -33,6 +33,8 @@ class View {
 
     TTF_Font *font = nullptr;
 
+    std::unique_ptr<uint32_t[]> background_pixels;
+
   public:
     View();
     ~View();

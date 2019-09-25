@@ -55,6 +55,14 @@ View::View() {
     uint32_t buffer_format_enum;
     SDL_QueryTexture(buffer, &buffer_format_enum, NULL, NULL, NULL);
     buffer_format = SDL_AllocFormat(buffer_format_enum);
+
+    background_pixels = std::make_unique<uint32_t[]>(width * height);
+    for (size_t x = 0; x < width; x++) {
+        for (size_t y = 0; y < height; y++) {
+            auto p = texel(background_pixels.get(), width, x, y);
+            *p = SDL_MapRGB(buffer_format, 150, 150, 150);
+        }
+    }
 }
 
 View::~View() {
@@ -163,6 +171,13 @@ void View::draw(const Model &m) {
         NULL,
         reinterpret_cast<void **>(&pixels),
         &pitch
+    );
+
+    // Copy background pixels to texture
+    std::memcpy(
+        static_cast<void *>(pixels),
+        static_cast<void *>(background_pixels.get()),
+        sizeof(uint32_t) * width * height
     );
 
     if (m.debug) {
