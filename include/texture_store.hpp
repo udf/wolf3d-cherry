@@ -30,6 +30,15 @@ struct Pixel {
         this->a = a;
     }
 
+    Pixel operator*(float val) {
+        return Pixel(
+            (uint8_t)((float)r * val),
+            (uint8_t)((float)g * val),
+            (uint8_t)((float)b * val),
+            (uint8_t)((float)a * val)
+        );
+    }
+
     uint32_t get_int() const {
         return reinterpret_cast<const uint32_t &>(*this);
     }
