@@ -21,4 +21,5 @@ The player position is specified with `@c` (where `c` is a cardinal direction `n
 
 `cc` = Top texture in partial height mode
 
-`ii` = Height of the block in hex (`00`-`FF`)
+`ii` = Height of the block in hex (`00`-`FF`)  
+`FF` is the default, `00` means fully high (this makes no sense, blame isard)
