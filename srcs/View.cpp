@@ -191,7 +191,6 @@ void View::draw(const Model &m) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
-        int has_hit = 0;
         for (int i = (int)hits.size() - 1; i >= 0; i--) {
             auto &hit = hits[i];
             if (!hit.tex)
@@ -222,16 +221,10 @@ void View::draw(const Model &m) {
                     float ty = (float)(y - y_start) / (float)(y_end - y_start);
                     auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-                    if (!has_hit)
-                        *texel(pixels, width, x, y) = 0x000000ff;
-                    Pixel stat = *reinterpret_cast<Pixel*>(texel(pixels, width, x, y));
-                    if (ty > 0.3f) {
-                        *texel(pixels, width, x, y) = has_hit ? ((stat * (1.0f - (p.a / 255.0f))) + p * (p.a / 255.0f)).get_int() : p.get_int();
-                    } else {
-                        float shift = (1.0f - ((ty / 0.6f) + 0.5f)) * (p.a / 255.0f);
-                        if (has_hit)
-                            p = (stat * (1.0f - p.a / 255.0f)) + (p * (p.a / 255.0f));
-                        p = (p * (1.0f - shift));
+                    if (p.a) {
+                        if (ty <= 0.3f) {
+                            p = (p * ((ty / 0.6f) + 0.5f));
+                        }
                         *texel(pixels, width, x, y) = p.get_int();
                     }
                     if ((y_end + (y_end - y)) < (ssize_t)height) {
@@ -240,7 +233,6 @@ void View::draw(const Model &m) {
                         *texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
                     }
                 }
-                has_hit = 1;
             }
         }
     }
