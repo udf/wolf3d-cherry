@@ -27,7 +27,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"F7", "floors/Wood1Test2.png"},
     {"F8", "floors/Wood1Test3.png"},
     {"F9", "floors/Wood2.png"},
-    {"D1", "fuck.png"},
+    {"D1", "doors/Door1.png"},
     {"D2", "doors/Blue_door.png"},
     {"G1", "walls/GlassWall.png"},
     {"H1", "halves/WTC1.png"},
