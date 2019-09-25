@@ -197,15 +197,15 @@ void View::draw(const Model &m) {
 	for (y = 0; y < y_start; y++) {
 		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
 		Model::Coord place = m.player.pos + (ray_dir * dist);
-		int tx = (int)(fmod(place.x, 1.0f));
-		int ty = (int)(fmod(place.y, 1.0f));
+		float tx = (fmod(place.x, 1.0f));
+		float ty = (fmod(place.y, 1.0f));
 		auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
 		if (!cell)
 			continue;
 		if (cell->ceil)
-	        	*texel(pixels, width, x, y) = cell->ceil->get_uint(tx, ty);
+	        	*texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)cell->ceil->w), (int)(ty * (float)cell->ceil->h));
 		if (cell->floor)
-	        	*texel(pixels, width, x, height - y - 2) = cell->floor->get_uint(tx, ty);
+	        	*texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)cell->floor->w), (int)(ty * (float)cell->ceil->h));
 	}
         if (hit.tex)
         for (; y < y_end && y < (ssize_t)height; y++) {

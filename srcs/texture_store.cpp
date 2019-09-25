@@ -8,6 +8,8 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"V2", "walls/CoveredWindow1.png"},
     {"W2", "walls/BlueWall.png"},
     {"W3", "walls/WTC.png"},
+    {"C1", "ceilings/Blue_ceiling.png"},
+    {"C2", "ceilings/concrete_ceiling1.png"},
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
