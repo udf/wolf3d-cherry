@@ -183,14 +183,14 @@ void View::draw(const Model &m) {
             if (!cell)
                 continue;
             if (cell->ceil)
-                *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w - 1)), (int)(ty * (float)(cell->ceil->h - 1)));
+                *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
             if (cell->floor)
-                *texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)(cell->floor->w - 1)), (int)(ty * (float)(cell->floor->h - 1)));
+                *texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
         }
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
-                int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)(hit.tex->w - 1));
-                int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)(hit.tex->h - 1));
+                int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)(hit.tex->w));
+                int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)(hit.tex->h));
                 *texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
             }
     }
