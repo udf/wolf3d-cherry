@@ -1,6 +1,11 @@
 #include "Model.hpp"
 
-auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
+auto Model::cast_ray(
+    const Model::Coord ray_dir,
+    size_t num_casts
+) const -> std::array<RayHit, max_casts> {
+    num_casts = std::min(num_casts, max_casts);
+
     // Which cell of the map we're in
     Point<ssize_t> map = player.pos.cast_to<ssize_t>();
 
@@ -18,7 +23,7 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
         ray_dir.y < 0 ? -1 : 1
     };
 
-    RayHit hit;
+    std::array<RayHit, max_casts> hits;
 
     // Which wall to check for the near and far cell
     const Texture *Cell::* ew_near_texture;
@@ -47,8 +52,9 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
     }
 
     // Do the thing
-    size_t iters = 0;
-    while(true) {
+    size_t i = 0;
+    while (i < num_casts) {
+        auto &hit = hits[i];
         if (map.x < 0 || map.y < 0 || (size_t)map.x >= map_w || (size_t)map.y >= map_h)
             break; // down and cry
         if (side_dist.x < side_dist.y) {
@@ -86,22 +92,20 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
             hit.pos = player.pos + ray_dir * side_dist.x;
         }
 
-        if (hit.tex)
-            break;
+        if (hit.tex) {
+            hit.dist = (
+                hit.is_ns
+                ? ((float)map.y - player.pos.y + (1.f - (float)step.y) / 2.f) / ray_dir.y
+                : ((float)map.x - player.pos.x + (1.f - (float)step.x) / 2.f) / ray_dir.x
+            );
+            i++;
+        }
 
         if (hit.is_ns) {
             side_dist.y += delta_dist.y;
         } else {
             side_dist.x += delta_dist.x;
         }
-        iters++;
     }
-    if (hit.tex) {
-        hit.dist = (
-            hit.is_ns
-            ? ((float)map.y - player.pos.y + (1.f - (float)step.y) / 2.f) / ray_dir.y
-            : ((float)map.x - player.pos.x + (1.f - (float)step.x) / 2.f) / ray_dir.x
-        );
-    }
-    return hit;
+    return hits;
 }
