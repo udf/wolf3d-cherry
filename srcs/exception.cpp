@@ -19,8 +19,7 @@ Exception::~Exception() {
 }
 
 template<typename T>
-Exception &Exception::set_member(T Exception::* member, T value)
-{
+Exception &Exception::set_member(T Exception::* member, T value) {
     this->*member = value;
     this->build_pretty_info();
     return *this;
