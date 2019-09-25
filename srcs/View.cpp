@@ -188,6 +188,9 @@ void View::draw(const Model &m) {
 
     #pragma omp parallel for
     for (uint32_t x = 0; x < width; x++) {
+        for (uint32_t y = 0; y < height; y++) {
+            z_buf[x][y] = std::numeric_limits<float>::infinity();
+        }
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
@@ -226,6 +229,7 @@ void View::draw(const Model &m) {
                             p = (p * ((ty / 0.6f) + 0.5f));
                         }
                         *texel(pixels, width, x, y) = p.get_int();
+                        z_buf[x][y] = hit.dist;
                     }
                     if ((y_end + (y_end - y)) < (ssize_t)height) {
                         Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));

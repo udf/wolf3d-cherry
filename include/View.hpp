@@ -5,6 +5,7 @@
 #include <cstring>
 #include <memory>
 #include <algorithm>
+#include <cmath>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -23,13 +24,14 @@ class View {
     void draw_text(const char *text, int x, int y);
     void draw_overlay(const Model &model);
 
-    const uint32_t width = 960;
-    const uint32_t height = 630;
+    static const uint32_t width = 960;
+    static const uint32_t height = 630;
 
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *buffer = nullptr;
     SDL_PixelFormat *buffer_format = nullptr;
+    float z_buf[width][height];
 
     TTF_Font *font = nullptr;
 
