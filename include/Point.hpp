@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #pragma once
+#include <cmath>
 
 // Generic x,y pair
 template<typename T>
@@ -98,6 +99,14 @@ class Point {
             static_cast<U>(x),
             static_cast<U>(y)
         );
+    }
+
+    T magnitude() const {
+        return std::sqrt(x * x + y * y);
+    }
+
+    Point normalize() {
+        return *this / magnitude();
     }
 
     T x, y;
