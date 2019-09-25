@@ -19,6 +19,7 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
     };
 
     RayHit hit;
+    hit.ray_dir = ray_dir;
 
     // Which wall to check for the near and far cell
     const Texture *Cell::* ew_near_texture;

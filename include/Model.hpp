@@ -55,8 +55,9 @@ struct Model {
     using Coord = Point<float>;
     struct RayHit {
         const Texture *tex = nullptr;
-        float dist;
         Model::Coord pos;
+        Model::Coord ray_dir;
+        float dist;
         bool is_ns;
     };
 
