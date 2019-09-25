@@ -46,11 +46,18 @@ struct Cell {
     float height = 1;
 };
 
+struct Sprite { // btw i prefer coke
+    const Texture *tex = nullptr;
+
+    Point<float> pos = {0, 0};
+    Point<float> scale = {1, 1};
+};
+
 struct ParsedCell {
     Cell cell;
 
     std::optional<float> player_rot;
-    // TODO: optional sprite
+    std::optional<Sprite> sprite;
 };
 
 struct Model {
@@ -79,8 +86,10 @@ struct Model {
 
     Player player;
     Coord cam_rot_vec;
+    std::vector<Sprite> sprites;
 
     static const std::unordered_map<char, float> cardinal_angles;
+    static const std::unordered_map<std::string, Coord> sprite_scales;
 
     size_t map_w = 0;
     size_t map_h = 0;

@@ -15,6 +15,10 @@ const decltype(Model::cardinal_angles) Model::cardinal_angles{
     {'s', 90}
 };
 
+const decltype(Model::sprite_scales) Model::sprite_scales{
+    // TODO
+};
+
 template<size_t N>
 static std::array<MapLine, N> get_n_lines(
     std::istream &s,
@@ -77,17 +81,30 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
 
         tokens = get_n_tokens<3>(lines[1]);
         c.cell.wall_left = texture_store.get(tokens[0].val);
-        if (tokens[1].val.size() == 2 && tokens[1].val[0] == '@') {
-            char direction = tokens[1].val[1];
-            try {
-                c.player_rot = cardinal_angles.at(direction);
-            } catch (std::out_of_range &e) {
-                throw Exception("Unknown direction")
-                    .set_hint(std::string(1, direction));
-            }
-        }
-        // tokens[1] unused (sprite?)
         c.cell.wall_right = texture_store.get(tokens[2].val);
+        [&]() {
+            if (tokens[1].val.size() == 2 && tokens[1].val[0] == '@') {
+                char direction = tokens[1].val[1];
+                try {
+                    c.player_rot = cardinal_angles.at(direction);
+                } catch (std::out_of_range &e) {
+                    throw Exception("Unknown direction")
+                        .set_hint(std::string(1, direction));
+                }
+                return;
+            }
+
+            const Texture *sprite_tex = texture_store.get(tokens[1].val);
+            if (sprite_tex) {
+                Sprite sprite;
+                sprite.tex = sprite_tex;
+                try {
+                    sprite.scale = sprite_scales.at(sprite_tex->short_name);
+                } catch (std::out_of_range &e) {
+                }
+                c.sprite = sprite;
+            }
+        }();
 
         tokens = get_n_tokens<3>(lines[2]);
         c.cell.floor = texture_store.get(tokens[0].val);
@@ -134,6 +151,15 @@ void Model::load_map(std::string filename) {
                 player.pos.x = static_cast<float>(x) + 0.5f;
                 player.pos.y = static_cast<float>(y) + 0.5f;
                 player.rot = cell.player_rot.value();
+            }
+            if (cell.sprite) {
+                sprites.push_back(cell.sprite.value());
+                auto &sprite = sprites.back();
+                sprite.pos.x = static_cast<float>(x) + 0.5f;
+                sprite.pos.y = static_cast<float>(y) + 0.5f;
+                std::cout << "DBG: added sprite: " << sprite.tex->short_name;
+                std::cout << " p(" << sprite.pos.x << " " << sprite.pos.y << ")";
+                std::cout << " s(" << sprite.scale.x << " " << sprite.scale.y << ")" << std::endl;
             }
         }
     }
