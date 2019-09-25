@@ -199,20 +199,19 @@ void View::draw(const Model &m) {
             for (; y < y_end && y < (ssize_t)height; y++) {
                 float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                 float ty = (float)(y - y_start) / (float)(y_end - y_start);
-		auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+		        auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-		if (ty > 0.4f)
+		        if (ty > 0.4f)
                 	*texel(pixels, width, x, y) = p.get_int();
-		else
+		        else
 	                *texel(pixels, width, x, y) = (p * ((ty / 0.8f) + 0.5f)).get_int();
-		if ((y_end + (y_end - y)) < (ssize_t)height)
-		{
-			Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
-			res += p * 0.02f;
-			*texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
-		}
-
-            }
+		        if ((y_end + (y_end - y)) < (ssize_t)height)
+		        {
+			        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
+        			res += p * 0.02f;
+	        		*texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
+		        }
+        }
     }
 
     SDL_UnlockTexture(buffer);
