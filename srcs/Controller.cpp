@@ -91,6 +91,7 @@ void Controller::calculate_fps() {
     uint32_t cur_ms = SDL_GetTicks();
     uint32_t elapsed_ms = cur_ms - start_ms;
     if (elapsed_ms >= 1000) {
+        std::cout << "fps: " << frames << std::endl;
         model.fps = frames;
         frames = 0;
         start_ms = cur_ms;
