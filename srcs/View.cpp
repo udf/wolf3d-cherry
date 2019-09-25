@@ -207,20 +207,32 @@ void View::draw(const Model &m) {
             if (cell->floor)
 	        {
         		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-        
                 *texel(pixels, width, x, height - y - 2) = p.get_int();
 	        }
         }
+        
+        int tstart = 0, tend = 0;
+        if (hit.cell->top && !hit.is_near)
+        {
+            tend = (int)((1.0f - hit.cell->height) * (float)(y_end - y_start)) + y_start;
+            tstart = 0;//(int)((0.5f - hit.cell->height * 0.5f) * (float)((y_end - y_start) + y_start));
+
+        }
+        if (tend < tstart)
+            std::swap(tend, tstart);
+
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
                 float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                 float ty = (float)(y - y_start) / (float)(y_end - y_start);
-		        auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+		        auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-		        if (ty > 0.4f)
+                if (y < tend && y > tstart) 
+                	*texel(pixels, width, x, y) = Pixel(255, 0, 0, 255).get_int();
+		        else if (ty > 0.3f)
                 	*texel(pixels, width, x, y) = p.get_int();
 		        else
-	                *texel(pixels, width, x, y) = (p * ((ty / 0.8f) + 0.5f)).get_int();
+	                *texel(pixels, width, x, y) = (p * ((ty / 0.6f) + 0.5f)).get_int();
 		        if ((y_end + (y_end - y)) < (ssize_t)height)
 		        {
 			        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
