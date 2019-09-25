@@ -185,15 +185,11 @@ void View::draw(const Model &m) {
             if (cell->ceil)
                 *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
             if (cell->floor)
-	    {
-		float txoff = frac(tx * (float)cell->floor->h), tyoff = frac(ty * (float)cell->floor->h);
-		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h))) * (2 - txoff - tyoff);
-		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-
+	        {
+        		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+        
                 *texel(pixels, width, x, height - y - 2) = p.get_int();
-	    }
+	        }
         }
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
