@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <unordered_map>
+#include <array>
 
 #include "Point.hpp"
 #include "texture_store.hpp"
@@ -78,7 +79,12 @@ struct Model {
     void load_map(std::string filename);
     Cell *get_cell(ssize_t x, ssize_t y);
     const Cell *get_cell(ssize_t x, ssize_t y) const;
-    RayHit cast_ray(const Model::Coord ray_dir) const;
+
+    static const size_t max_casts = 3;
+    auto cast_ray(
+        const Model::Coord ray_dir,
+        size_t num_casts = max_casts
+    ) const -> std::array<RayHit, max_casts>;
 
     struct Player {
         Coord pos = Coord(0, 0);
