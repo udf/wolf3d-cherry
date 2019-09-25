@@ -60,26 +60,29 @@ auto Model::cast_ray(const Model::Coord ray_dir) const -> RayHit {
         }
 
         auto check_cell = [this, &hit](
-            ssize_t x, ssize_t y, const Texture *Cell::* tex_member
+            bool is_near, ssize_t x, ssize_t y, const Texture *Cell::* tex_member
         ) {
             if (hit.tex)
                 return;
             auto cell = get_cell(x, y);
-            if (cell)
+            if (cell) {
                 hit.tex = cell->*tex_member;
+                hit.cell = cell;
+                hit.is_near = is_near;
+            }
         };
 
         ssize_t mapNearX = map.x;
         ssize_t mapNearY = map.y;
         if (hit.is_ns) {
             mapNearY -= step.y;
-            check_cell(mapNearX, mapNearY, ns_near_texture);
-            check_cell(map.x, map.y, ns_far_texture);
+            check_cell(true, mapNearX, mapNearY, ns_near_texture);
+            check_cell(false, map.x, map.y, ns_far_texture);
             hit.pos = player.pos + ray_dir * side_dist.y;
         } else {
             mapNearX -= step.x;
-            check_cell(mapNearX, mapNearY, ew_near_texture);
-            check_cell(map.x, map.y, ew_far_texture);
+            check_cell(true, mapNearX, mapNearY, ew_near_texture);
+            check_cell(false, map.x, map.y, ew_far_texture);
             hit.pos = player.pos + ray_dir * side_dist.x;
         }
 
