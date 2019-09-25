@@ -111,19 +111,33 @@ void View::draw_overlay(const Model &m) {
         draw_scaled_line(0, y, m.map_w, y);
     }
 
+    const auto draw_wall_line = [&](
+        const Texture *tex,
+        auto x1,
+        auto y1,
+        auto x2,
+        auto y2
+    ) {
+        if (tex->has_alpha) {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
+        } else {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        }
+        draw_scaled_line(x1, y1, x2, y2);
+    };
+
     // draw walls
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     for (size_t x = 0; x < m.map_w; x++) {
         for (size_t y = 0; y < m.map_h; y++) {
             auto cell = m.get_cell((ssize_t)x, (ssize_t)y);
             if (cell->wall_top)
-                draw_scaled_line(x, y, x + 1, y);
+                draw_wall_line(cell->wall_top, x, y, x + 1, y);
             if (cell->wall_bottom)
-                draw_scaled_line(x, y + 1, x + 1, y + 1);
+                draw_wall_line(cell->wall_bottom, x, y + 1, x + 1, y + 1);
             if (cell->wall_left)
-                draw_scaled_line(x, y, x, y + 1);
+                draw_wall_line(cell->wall_left, x, y, x, y + 1);
             if (cell->wall_right)
-                draw_scaled_line(x + 1, y, x + 1, y + 1);
+                draw_wall_line(cell->wall_right, x + 1, y, x + 1, y + 1);
         }
     }
 
@@ -141,17 +155,22 @@ void View::draw_overlay(const Model &m) {
 
     // Draw first wall hit
     SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
-    auto hit = m.cast_ray(m.player.rot_vec);
-    rect.x = hit.pos.x * scale + transform.x;
-    rect.y = hit.pos.y * scale + transform.y;
-    SDL_RenderFillRectF(renderer, &rect);
-    SDL_RenderDrawLineF(
-        renderer,
-        center.x,
-        center.y,
-        rect.x,
-        rect.y
-    );
+    auto hits = m.cast_ray(m.player.rot_vec);
+    Model::Coord pos = center;
+    for (auto &hit : hits) {
+        rect.x = hit.pos.x * scale + transform.x;
+        rect.y = hit.pos.y * scale + transform.y;
+        SDL_RenderFillRectF(renderer, &rect);
+        SDL_RenderDrawLineF(
+            renderer,
+            pos.x,
+            pos.y,
+            rect.x,
+            rect.y
+        );
+        pos.x = rect.x;
+        pos.y = rect.y;
+    }
 }
 
 void View::draw(const Model &m) {
@@ -169,7 +188,8 @@ void View::draw(const Model &m) {
     for (uint32_t x = 0; x < width; x++) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
-        auto hit = m.cast_ray(ray_dir);
+        auto hits = m.cast_ray(ray_dir);
+        auto &hit = hits[0];
         float line_height = (float)height / hit.dist;
         ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
         ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
@@ -187,20 +207,32 @@ void View::draw(const Model &m) {
             if (cell->floor)
 	        {
         		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-        
                 *texel(pixels, width, x, height - y - 2) = p.get_int();
 	        }
         }
+        
+        int tstart = 0, tend = 0;
+        if (hit.cell->top && !hit.is_near)
+        {
+            tend = (int)((1.0f - hit.cell->height) * (float)(y_end - y_start)) + y_start;
+            tstart = 0;//(int)((0.5f - hit.cell->height * 0.5f) * (float)((y_end - y_start) + y_start));
+
+        }
+        if (tend < tstart)
+            std::swap(tend, tstart);
+
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
                 float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                 float ty = (float)(y - y_start) / (float)(y_end - y_start);
-		        auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+		        auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-		        if (ty > 0.4f)
+                if (y < tend && y > tstart) 
+                	*texel(pixels, width, x, y) = Pixel(255, 0, 0, 255).get_int();
+		        else if (ty > 0.3f)
                 	*texel(pixels, width, x, y) = p.get_int();
 		        else
-	                *texel(pixels, width, x, y) = (p * ((ty / 0.8f) + 0.5f)).get_int();
+	                *texel(pixels, width, x, y) = (p * ((ty / 0.6f) + 0.5f)).get_int();
 		        if ((y_end + (y_end - y)) < (ssize_t)height)
 		        {
 			        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
@@ -213,7 +245,7 @@ void View::draw(const Model &m) {
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    // draw_overlay(m);
+    draw_overlay(m);
 
     uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
 

@@ -67,6 +67,7 @@ Texture::Texture(const std::string &short_name, SDL_Surface *surface) {
     this->pixels = std::make_unique<Pixel[]>(total);
     this->short_name = short_name;
     this->col_has_alpha = std::make_unique<bool[]>(w);
+    this->has_alpha = false;
     for (size_t x = 0; x < w; x++) {
         col_has_alpha[x] = false;
     }
@@ -74,6 +75,7 @@ Texture::Texture(const std::string &short_name, SDL_Surface *surface) {
         pixels[i] = surface_get_pixel(surface, i);
         size_t x = i % w;
         col_has_alpha[x] |= (pixels[i].a < 255);
+        has_alpha |= col_has_alpha[x];
     }
 
     SDL_UnlockSurface(surface);

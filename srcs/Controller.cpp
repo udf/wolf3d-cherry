@@ -52,7 +52,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
         move_vec -= model.player.rot_vec;
     }
     auto new_pos = model.player.pos + move_vec * move_thrust;
-    auto hit = model.cast_ray(move_vec);
+    auto hit = model.cast_ray(move_vec, 1)[0];
     auto hit_dist = comp_euc_dist(model.player.pos, hit.pos);
     auto new_dist = comp_euc_dist(model.player.pos, new_pos);
     // clip x or y if we hit a wall
@@ -65,7 +65,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
         }
         // do a second ray cast to fix clipping through corners
         auto ray_dir = (new_pos - model.player.pos).normalize();
-        hit = model.cast_ray(ray_dir);
+        hit = model.cast_ray(ray_dir, 1)[0];
         auto hit_dist = comp_euc_dist(model.player.pos, hit.pos);
         auto new_dist = comp_euc_dist(model.player.pos, new_pos);
         if (hit_dist < new_dist) {
