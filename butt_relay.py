@@ -8,7 +8,7 @@ keyboard = Controller()
 pins = {
         'A': {"pin": 2, "key": 'z'},
         'B': {"pin": 4, "key": 'x'},
-        'Start': {"pin": 3, "key": 'c'},
+        'Start': {"pin": 3, "key": Key.esc},
         'R': {"pin": 6, "key": Key.right},
         'L': {"pin": 0, "key": Key.left},
         'U': {"pin": 13, "key": Key.up},

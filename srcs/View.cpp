@@ -190,23 +190,30 @@ void View::draw(const Model &m) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hit = m.cast_ray(ray_dir);
-        if (!hit.tex)
-            continue;
         float line_height = (float)height / hit.dist;
-        size_t y_start = (size_t)std::clamp(
-            (float)height / 2.f - line_height / 2.f,
-            0.f,
-            (float)(height - 1)
-        );
-        size_t y_end = (size_t)std::clamp(
-            (float)height / 2.f + line_height / 2.f,
-            0.f,
-            (float)(height - 1)
-        );
+        ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
+        ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
+	ssize_t y;
+	for (y = 0; y < y_start; y++) {
+		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
+		Model::Coord place = m.player.pos + (ray_dir * dist);
+		int tx = (int)(fmod(place.x, 1.0f));
+		int ty = (int)(fmod(place.y, 1.0f));
+		auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
+		if (!cell)
+			continue;
+		if (cell->ceil)
+	        	*texel(pixels, width, x, y) = cell->ceil->get_uint(tx, ty);
+		if (cell->floor)
+	        	*texel(pixels, width, x, height - y - 2) = cell->floor->get_uint(tx, ty);
+	}
+        if (hit.tex)
+        for (; y < y_end && y < (ssize_t)height; y++) {
+		int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? fmod(hit.pos.x, 1.0f) : 1 - fmod(hit.pos.x, 1.0f)) :  (ray_dir.x > 0 ? fmod(hit.pos.y, 1.0f) : 1 - fmod(hit.pos.y, 1.0f)))) * (float)hit.tex->w);
+		int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)hit.tex->h);
+        	*texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
 
-        for (size_t y = y_start; y < y_end; y++) {
-            *texel(pixels, width, x, y) = hit.tex->get_uint(0, 0);
-        }
+        } 
     }
 
     SDL_UnlockTexture(buffer);
