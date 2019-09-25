@@ -15,4 +15,6 @@ float square(float val);
 // Euclidian distance for comparisons (without sqrt)
 float comp_euc_dist(Point<float> p1, Point<float> p2);
 
-float frac(float val);
+inline float frac(float val) {
+    return val - (float)((int)val);
+}
