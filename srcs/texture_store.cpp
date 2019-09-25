@@ -28,7 +28,6 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"F9", "floors/Wood2.png"},
     {"D1", "fuck.png"},
     {"D2", "fuck.png"},
-    {"D3", "doors/SafeDoor.png"},
     {"G1", "fuck.png"},
     {"H1", "halves/WTC1.png"},
     {"H2", "halves/WTC2.png"},
@@ -37,6 +36,8 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"H5", "halves/White_Board1.png"},
     {"H6", "halves/White_Board2.png"},
     {"H7", "halves/White_Board3.png"},
+    {"H8", "halves/SafeDoor1.png"},
+    {"H9", "halves/SafeDoor2.png"},
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
