@@ -30,7 +30,7 @@ struct Pixel {
         this->a = a;
     }
 
-    Pixel operator*(float val) {
+    Pixel operator*(float val) const {
         return Pixel(
             (uint8_t)((float)r * val),
             (uint8_t)((float)g * val),
