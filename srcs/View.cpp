@@ -156,19 +156,20 @@ void View::draw_overlay(const Model &m) {
     // Draw first wall hit
     SDL_SetRenderDrawColor(renderer, 255, 0, 255, 0);
     auto hits = m.cast_ray(m.player.rot_vec);
+    Model::Coord pos = center;
     for (auto &hit : hits) {
-        if (!hit.tex)
-            break;
         rect.x = hit.pos.x * scale + transform.x;
         rect.y = hit.pos.y * scale + transform.y;
         SDL_RenderFillRectF(renderer, &rect);
         SDL_RenderDrawLineF(
             renderer,
-            center.x,
-            center.y,
+            pos.x,
+            pos.y,
             rect.x,
             rect.y
         );
+        pos.x = rect.x;
+        pos.y = rect.y;
     }
 }
 
