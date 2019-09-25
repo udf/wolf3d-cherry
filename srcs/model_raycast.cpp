@@ -98,6 +98,8 @@ auto Model::cast_ray(
                 ? ((float)map.y - player.pos.y + (1.f - (float)step.y) / 2.f) / ray_dir.y
                 : ((float)map.x - player.pos.x + (1.f - (float)step.x) / 2.f) / ray_dir.x
             );
+            if (!hit.tex->has_alpha)
+                break;
             i++;
         }
 
