@@ -42,6 +42,8 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"L1", "tiles/table_front.png"},
     {"L2", "tiles/table_inside.png"},
     {"T1", "tiles/table_top.png"},
+    {"Z1", "ceilings/void.png"},
+    {"Z2", "floors/table_top.png"}
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
