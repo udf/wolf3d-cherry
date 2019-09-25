@@ -28,7 +28,9 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"D2", "fuck.png"},
     {"G1", "fuck.png"},
     {"H1", "halves/WTC1.png"},
-    {"H2", "halves/WTC2.png"}
+    {"H2", "halves/WTC2.png"},
+    {"H3", "halves/WWTC1.png"},
+    {"H4", "halves/WWTC2.png"}
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
