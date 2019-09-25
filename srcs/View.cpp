@@ -198,7 +198,7 @@ void View::draw(const Model &m) {
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    draw_overlay(m);
+    // draw_overlay(m);
 
     uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
 
