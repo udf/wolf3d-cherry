@@ -23,8 +23,8 @@ class View {
     void draw_text(const char *text, int x, int y);
     void draw_overlay(const Model &model);
 
-    const uint32_t width = 1280;
-    const uint32_t height = 840;
+    const uint32_t width = 960;
+    const uint32_t height = 630;
 
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;

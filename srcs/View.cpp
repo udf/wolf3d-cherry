@@ -189,9 +189,21 @@ void View::draw(const Model &m) {
         }
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
-                int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)(hit.tex->w));
-                int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)(hit.tex->h));
-                *texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
+                float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
+                float ty = (float)(y - y_start) / (float)(y_end - y_start);
+		auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+
+		if (ty > 0.3f)
+                	*texel(pixels, width, x, y) = p.get_int();
+		else
+	                *texel(pixels, width, x, y) = (p * ((ty / 0.6f) + 0.5f)).get_int();
+		if ((y_end + (y_end - y)) < (ssize_t)height)
+		{
+			Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
+			res += p * 0.03f;
+			*texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
+		}
+
             }
     }
 

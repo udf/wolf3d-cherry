@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <algorithm>
 #include <unordered_map>
 #include <string>
 #include <iostream>
@@ -37,6 +38,23 @@ struct Pixel {
             (uint8_t)((float)b * val),
             (uint8_t)((float)a * val)
         );
+    }
+
+    Pixel operator+(const Pixel &val) const {
+        return Pixel(
+            (uint8_t)std::clamp(((uint16_t)r + val.r), 0, 255),
+            (uint8_t)std::clamp(((uint16_t)g + val.g), 0, 255),
+            (uint8_t)std::clamp(((uint16_t)b + val.b), 0, 255),
+            (uint8_t)std::clamp(((uint16_t)a + val.a), 0, 255)
+        );
+    }
+
+    Pixel &operator+=(const Pixel &val) {
+        r = (uint8_t)std::clamp(((uint16_t)r + val.r), 0, 255);
+        g = (uint8_t)std::clamp(((uint16_t)g + val.g), 0, 255);
+        b = (uint8_t)std::clamp(((uint16_t)b + val.b), 0, 255);
+        a = (uint8_t)std::clamp(((uint16_t)a + val.a), 0, 255);
+        return *this;
     }
 
     uint32_t get_int() const {
