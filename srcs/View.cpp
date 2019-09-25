@@ -55,14 +55,6 @@ View::View() {
     uint32_t buffer_format_enum;
     SDL_QueryTexture(buffer, &buffer_format_enum, NULL, NULL, NULL);
     buffer_format = SDL_AllocFormat(buffer_format_enum);
-
-    background_pixels = std::make_unique<uint32_t[]>(width * height);
-    for (size_t x = 0; x < width; x++) {
-        for (size_t y = 0; y < height; y++) {
-            auto p = texel(background_pixels.get(), width, x, y);
-            *p = SDL_MapRGB(buffer_format, 150, 150, 150);
-        }
-    }
 }
 
 View::~View() {
@@ -173,13 +165,6 @@ void View::draw(const Model &m) {
         &pitch
     );
 
-    // Copy background pixels to texture
-    std::memcpy(
-        static_cast<void *>(pixels),
-        static_cast<void *>(background_pixels.get()),
-        sizeof(uint32_t) * width * height
-    );
-
     if (m.debug) {
         std::cout << "player data" << std::endl;
         std::cout << "pos(" << m.player.pos.x << ", " << m.player.pos.y << ")" << std::endl;
@@ -197,8 +182,8 @@ void View::draw(const Model &m) {
 	for (y = 0; y < y_start; y++) {
 		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
 		Model::Coord place = m.player.pos + (ray_dir * dist);
-		float tx = (fmod(place.x, 1.0f));
-		float ty = (fmod(place.y, 1.0f));
+		float tx = (frac(place.x));
+		float ty = (frac(place.y));
 		auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
 		if (!cell)
 			continue;
@@ -209,7 +194,7 @@ void View::draw(const Model &m) {
 	}
         if (hit.tex)
         for (; y < y_end && y < (ssize_t)height; y++) {
-		int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? fmod(hit.pos.x, 1.0f) : 1 - fmod(hit.pos.x, 1.0f)) :  (ray_dir.x > 0 ? fmod(hit.pos.y, 1.0f) : 1 - fmod(hit.pos.y, 1.0f)))) * (float)hit.tex->w);
+		int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)hit.tex->w);
 		int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)hit.tex->h);
         	*texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
 
