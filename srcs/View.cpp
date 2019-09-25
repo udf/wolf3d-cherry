@@ -185,25 +185,33 @@ void View::draw(const Model &m) {
             if (cell->ceil)
                 *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
             if (cell->floor)
-                *texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+	    {
+		float txoff = frac(tx * (float)cell->floor->h), tyoff = frac(ty * (float)cell->floor->h);
+		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h))) * (2 - txoff - tyoff);
+		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+		//p += cell->floor->get_uint((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+
+                *texel(pixels, width, x, height - y - 2) = p.get_int();
+	    }
         }
         if (hit.tex)
             for (; y < y_end && y < (ssize_t)height; y++) {
                 float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                 float ty = (float)(y - y_start) / (float)(y_end - y_start);
-                auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+		        auto p= hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-                if (ty > 0.3f)
-                    *texel(pixels, width, x, y) = p.get_int();
-                else
-                    *texel(pixels, width, x, y) = (p * ((ty / 0.6f) + 0.5f)).get_int();
-                if ((y_end + (y_end - y)) < (ssize_t)height) {
-                    Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
-                    res += p * 0.03f;
-                    *texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
-                }
-
-            }
+		        if (ty > 0.4f)
+                	*texel(pixels, width, x, y) = p.get_int();
+		        else
+	                *texel(pixels, width, x, y) = (p * ((ty / 0.8f) + 0.5f)).get_int();
+		        if ((y_end + (y_end - y)) < (ssize_t)height)
+		        {
+			        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
+        			res += p * 0.02f;
+	        		*texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
+		        }
+        }
     }
 
     SDL_UnlockTexture(buffer);
