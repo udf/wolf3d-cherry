@@ -69,6 +69,7 @@ struct Texture {
     size_t w;
     size_t h;
     std::string short_name;
+    std::unique_ptr<bool[]> col_has_alpha;
 
     Texture(const std::string &short_name, SDL_Surface *surface);
 
