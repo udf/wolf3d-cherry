@@ -98,7 +98,6 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
             height = 256;
         }
         c.cell.height = (float)height / 256;
-        std::cout << tokens[2].val << " " << height << " " << c.cell.height << std::endl;
     }
 
     return cells;
