@@ -192,8 +192,7 @@ void View::draw(const Model &m) {
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
         int has_hit = 0;
-        for (int i = (int)hits.size() - 1; i >= 0; i--)
-        {
+        for (int i = (int)hits.size() - 1; i >= 0; i--) {
             auto &hit = hits[i];
             if (!hit.tex)
                 continue;
@@ -218,8 +217,7 @@ void View::draw(const Model &m) {
                 }
             }
             
-            if (hit.tex)
-            {
+            if (hit.tex) {
                 for (; y < y_end && y < (ssize_t)height; y++) {
                     float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                     float ty = (float)(y - y_start) / (float)(y_end - y_start);
@@ -228,24 +226,22 @@ void View::draw(const Model &m) {
                     if (!has_hit)
                         *texel(pixels, width, x, y) = 0x000000ff;
                     Pixel stat = *reinterpret_cast<Pixel*>(texel(pixels, width, x, y));
-                    if (ty > 0.3f)
+                    if (ty > 0.3f) {
                         *texel(pixels, width, x, y) = has_hit ? ((stat * (1.0f - (p.a / 255.0f))) + p * (p.a / 255.0f)).get_int() : p.get_int();
-                    else
-                    {
+                    } else {
                         float shift = (1.0f - ((ty / 0.6f) + 0.5f)) * (p.a / 255.0f);
                         if (has_hit)
                             p = (stat * (1.0f - p.a / 255.0f)) + (p * (p.a / 255.0f));
                         p = (p * (1.0f - shift));
                         *texel(pixels, width, x, y) = p.get_int();
                     }
-                    if ((y_end + (y_end - y)) < (ssize_t)height)
-                    {
+                    if ((y_end + (y_end - y)) < (ssize_t)height) {
                         Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
                         res += p * 0.02f;
                         *texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
                     }
                 }
-            has_hit = 1;
+                has_hit = 1;
             }
         }
     }
