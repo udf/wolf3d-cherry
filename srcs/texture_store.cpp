@@ -39,6 +39,8 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"H7", "halves/White_Board3.png"},
     {"H8", "halves/SafeDoor1.png"},
     {"H9", "halves/SafeDoor2.png"},
+    {"L1", "tiles/temptabel.png"},
+    {"T1", "tiles/top.png"},
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {

@@ -158,6 +158,8 @@ void View::draw_overlay(const Model &m) {
     auto hits = m.cast_ray(m.player.rot_vec);
     Model::Coord pos = center;
     for (auto &hit : hits) {
+        if (!hit.tex)
+            break;
         rect.x = hit.pos.x * scale + transform.x;
         rect.y = hit.pos.y * scale + transform.y;
         SDL_RenderFillRectF(renderer, &rect);
@@ -214,7 +216,7 @@ void View::draw(const Model &m) {
         int tstart = 0, tend = 0;
         if (hit.cell->top && !hit.is_near)
         {
-            tend = (int)((1.0f - hit.cell->height) * (float)(y_end - y_start)) + y_start;
+            tend = (int)((1.0f - hit.cell->height) * (float)(y_end - y_start) + (float)y_start);
             tstart = 0;//(int)((0.5f - hit.cell->height * 0.5f) * (float)((y_end - y_start) + y_start));
 
         }
