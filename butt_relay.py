@@ -6,7 +6,7 @@ from pynput.keyboard import Key, Controller
 keyboard = Controller()
 
 pins = {
-        'A': {"pin": 2, "key": 'z'},
+        'A': {"pin": 2, "key": Key.shift},
         'B': {"pin": 4, "key": 'x'},
         'Start': {"pin": 3, "key": Key.esc},
         'R': {"pin": 6, "key": Key.right},

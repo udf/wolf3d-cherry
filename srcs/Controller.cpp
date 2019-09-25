@@ -29,7 +29,8 @@ void Controller::process_input(uint32_t elapsed_ms) {
 
     const uint8_t *state = SDL_GetKeyboardState(NULL);
     const auto elapsed_sec = static_cast<Model::Coord::type>(elapsed_ms) / 1000.f;
-    const float move_thrust = elapsed_sec * 1.5f;
+    const bool is_sprinting = state[SDL_SCANCODE_LSHIFT];
+    const float move_thrust = elapsed_sec * (is_sprinting ? 3.f : 1.5f);
     const float rot_thrust = elapsed_sec * 180.f;
 
     if (state[SDL_SCANCODE_LEFT]) {
@@ -91,7 +92,6 @@ void Controller::calculate_fps() {
     uint32_t cur_ms = SDL_GetTicks();
     uint32_t elapsed_ms = cur_ms - start_ms;
     if (elapsed_ms >= 1000) {
-        std::cout << "fps: " << frames << std::endl;
         model.fps = frames;
         frames = 0;
         start_ms = cur_ms;
