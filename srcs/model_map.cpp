@@ -178,7 +178,7 @@ Cell *Model::get_cell(ssize_t x, ssize_t y) {
 
     size_t x_ = static_cast<size_t>(x);
     size_t y_ = static_cast<size_t>(y);
-    if (x_ >= map_w || y_ >= map_h)
+    if (x_ >= map_w || y_ >= map_h )
         return nullptr;
 
     return &map[y_ * map_w + x_];

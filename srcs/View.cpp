@@ -191,63 +191,69 @@ void View::draw(const Model &m) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
-        auto &hit = hits[0];
-        float line_height = (float)height / hit.dist;
-        ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
-        ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
-        ssize_t y;
-        for (y = 0; y < y_start; y++) {
-            float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
-            Model::Coord place = m.player.pos + (ray_dir * dist);
-            float tx = (frac(place.x));
-            float ty = (frac(place.y));
-            auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
-            if (!cell)
-                continue;
-            if (cell->ceil)
-                *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
-            if (cell->floor)
-	        {
-        		Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-                *texel(pixels, width, x, height - y - 2) = p.get_int();
-	        }
-        }
-        
-        int tstart = 0, tend = 0;
-        if (hit.cell->top && !hit.is_near)
+        int has_hit = 0;
+        for (int i = (int)hits.size() - 2; i >= 0; i--)
         {
-            tend = (int)((1.0f - hit.cell->height) * (float)(y_end - y_start) + (float)y_start);
-            tstart = 0;//(int)((0.5f - hit.cell->height * 0.5f) * (float)((y_end - y_start) + y_start));
+            auto &hit = hits[i];
+            if (!hit.tex)
+                continue;
+            float line_height = (float)height / hit.dist;
+            ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
+            ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
+            ssize_t y;
+            for (y = 0; y < y_start; y++) {
+                float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
+                Model::Coord place = m.player.pos + (ray_dir * dist);
+                float tx = (frac(place.x));
+                float ty = (frac(place.y));
+                auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
+                if (!cell)
+                    continue;
+                if (cell->ceil)
+                    *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
+                if (cell->floor)
+                {
+                    Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
+                    *texel(pixels, width, x, height - y - 2) = p.get_int();
+                }
+            }
+            
+            if (hit.tex)
+            {
+                for (; y < y_end && y < (ssize_t)height; y++) {
+                    float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
+                    float ty = (float)(y - y_start) / (float)(y_end - y_start);
+                    auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
 
-        }
-        if (tend < tstart)
-            std::swap(tend, tstart);
-
-        if (hit.tex)
-            for (; y < y_end && y < (ssize_t)height; y++) {
-                float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
-                float ty = (float)(y - y_start) / (float)(y_end - y_start);
-		        auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
-
-                if (y < tend && y > tstart) 
-                	*texel(pixels, width, x, y) = Pixel(255, 0, 0, 255).get_int();
-		        else if (ty > 0.3f)
-                	*texel(pixels, width, x, y) = p.get_int();
-		        else
-	                *texel(pixels, width, x, y) = (p * ((ty / 0.6f) + 0.5f)).get_int();
-		        if ((y_end + (y_end - y)) < (ssize_t)height)
-		        {
-			        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
-        			res += p * 0.02f;
-	        		*texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
-		        }
+                    if (!has_hit)
+                        *texel(pixels, width, x, y) = 0x000000ff;
+                    Pixel stat = *reinterpret_cast<Pixel*>(texel(pixels, width, x, y));
+                    if (ty > 0.3f)
+                        *texel(pixels, width, x, y) = has_hit ? ((stat * (1.0f - (p.a / 255.0f))) + p * (p.a / 255.0f)).get_int() : p.get_int();
+                    else
+                    {
+                        float shift = (1.0f - ((ty / 0.6f) + 0.5f)) * (p.a / 255.0f);
+                        if (has_hit)
+                            p = (stat * (1.0f - p.a / 255.0f)) + (p * (p.a / 255.0f));
+                        p = (p * (1.0f - shift));
+                        *texel(pixels, width, x, y) = p.get_int();
+                    }
+                    if ((y_end + (y_end - y)) < (ssize_t)height)
+                    {
+                        Pixel res = *reinterpret_cast<Pixel*>(texel(pixels, width, x, (2 * y_end - y)));
+                        res += p * 0.02f;
+                        *texel(pixels, width, x, (2 * y_end - y)) = res.get_int();
+                    }
+                }
+            has_hit = 1;
+            }
         }
     }
 
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    draw_overlay(m);
+    //draw_overlay(m);
 
     uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
 

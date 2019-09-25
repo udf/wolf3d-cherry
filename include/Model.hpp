@@ -80,7 +80,7 @@ struct Model {
     Cell *get_cell(ssize_t x, ssize_t y);
     const Cell *get_cell(ssize_t x, ssize_t y) const;
 
-    static const size_t max_casts = 3;
+    static const size_t max_casts = 5;
     auto cast_ray(
         const Model::Coord ray_dir,
         size_t num_casts = max_casts
