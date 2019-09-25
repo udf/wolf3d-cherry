@@ -45,12 +45,12 @@ struct Texture {
 
     Texture(const std::string &short_name, SDL_Surface *surface);
 
-    const Pixel *get(size_t x, size_t y) const {
-        return &pixels[y * w + x];
+    const Pixel &get(size_t x, size_t y) const {
+        return pixels[y * w + x];
     }
 
     uint32_t get_uint(size_t x, size_t y) const {
-        return get(x, y)->get_int();
+        return get(x, y).get_int();
     }
 };
 
