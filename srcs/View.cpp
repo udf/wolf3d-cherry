@@ -172,26 +172,26 @@ void View::draw(const Model &m) {
         float line_height = (float)height / hit.dist;
         ssize_t y_start = (ssize_t)((float)height / 2.f - line_height / 2.f);
         ssize_t y_end = (ssize_t)((float)height / 2.f + line_height / 2.f);
-	ssize_t y;
-	for (y = 0; y < y_start; y++) {
-		float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
-		Model::Coord place = m.player.pos + (ray_dir * dist);
-		float tx = (frac(place.x));
-		float ty = (frac(place.y));
-		auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
-		if (!cell)
-			continue;
-		if (cell->ceil)
-	        	*texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w - 1)), (int)(ty * (float)(cell->ceil->h - 1)));
-		if (cell->floor)
-	        	*texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)(cell->floor->w - 1)), (int)(ty * (float)(cell->floor->h - 1)));
-	}
+        ssize_t y;
+        for (y = 0; y < y_start; y++) {
+            float dist = ((float)height / 2.0f) / (((float)height / 2.0f) - (float)y);
+            Model::Coord place = m.player.pos + (ray_dir * dist);
+            float tx = (frac(place.x));
+            float ty = (frac(place.y));
+            auto cell = m.get_cell((ssize_t)place.x, (ssize_t)place.y);
+            if (!cell)
+                continue;
+            if (cell->ceil)
+                *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w - 1)), (int)(ty * (float)(cell->ceil->h - 1)));
+            if (cell->floor)
+                *texel(pixels, width, x, height - y - 2) = cell->floor->get_uint((int)(tx * (float)(cell->floor->w - 1)), (int)(ty * (float)(cell->floor->h - 1)));
+        }
         if (hit.tex)
-        for (; y < y_end && y < (ssize_t)height; y++) {
-		int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)(hit.tex->w - 1));
-		int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)(hit.tex->h - 1));
-        	*texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
-        } 
+            for (; y < y_end && y < (ssize_t)height; y++) {
+                int tx = (uint32_t)(((hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y)))) * (float)(hit.tex->w - 1));
+                int ty = (uint32_t)(((float)(y - y_start) / (float)(y_end - y_start)) * (float)(hit.tex->h - 1));
+                *texel(pixels, width, x, y) = hit.tex->get_uint(tx, ty);
+            }
     }
 
     SDL_UnlockTexture(buffer);
