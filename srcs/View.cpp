@@ -192,7 +192,7 @@ void View::draw(const Model &m) {
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
         int has_hit = 0;
-        for (int i = (int)hits.size() - 2; i >= 0; i--)
+        for (int i = (int)hits.size() - 1; i >= 0; i--)
         {
             auto &hit = hits[i];
             if (!hit.tex)
