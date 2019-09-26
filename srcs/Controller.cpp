@@ -1,5 +1,11 @@
 #include "Controller.hpp"
 
+const decltype(Controller::map_shortnames) Controller::map_shortnames{
+    {"T1", "4flr.map"},
+    {"T2", "5flr.map"},
+};
+
+
 Controller::Controller() {
 }
 
@@ -7,7 +13,7 @@ Controller::~Controller() {
 }
 
 void Controller::process_input(uint32_t elapsed_ms) {
-    static bool aids = true;
+    bool do_map_load = false;
 
     SDL_Event event;
 
@@ -22,14 +28,23 @@ void Controller::process_input(uint32_t elapsed_ms) {
                 running = false;
             if (event.key.keysym.scancode == SDL_SCANCODE_F)
                 model.debug = true;
-            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-                model.load_map(aids ? "5flr.map" : "4flr.map");
-                aids = !aids;
-            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+                do_map_load = true;
             break;
 
         default:
             break;
+        }
+    }
+
+    if (do_map_load) {
+        auto cell = model.get_cell(
+            (ssize_t)model.player.pos.x,
+            (ssize_t)model.player.pos.y
+        );
+        if (cell != nullptr && cell->tp_name != "") {
+            const auto &map = map_shortnames.at(cell->tp_name);
+            model.load_map(map);
         }
     }
 

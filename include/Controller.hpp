@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <unordered_map>
 
 #include <SDL2/SDL.h>
 
@@ -17,6 +18,7 @@ class Controller {
     void process_input(uint32_t elapsed_ms);
     void calculate_fps();
 
+    const static std::unordered_map<std::string, std::string> map_shortnames;
     View view;
 
     bool running = true;

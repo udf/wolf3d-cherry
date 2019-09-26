@@ -42,6 +42,8 @@ struct Cell {
     const Texture *wall_bottom = nullptr;
     const Texture *wall_left = nullptr;
     const Texture *wall_right = nullptr;
+
+    std::string tp_name;
 };
 
 struct Sprite { // btw i prefer coke

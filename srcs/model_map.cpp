@@ -77,7 +77,7 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
         auto tokens = get_n_tokens<3>(lines[0]);
         c.cell.ceil = texture_store.get(tokens[0].val);
         c.cell.wall_top = texture_store.get(tokens[1].val);
-        // tokens[2] unused
+        c.cell.tp_name = tokens[2].val == "--" ? "" : tokens[2].val;
 
         tokens = get_n_tokens<3>(lines[1]);
         c.cell.wall_left = texture_store.get(tokens[0].val);
