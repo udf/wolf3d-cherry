@@ -7,6 +7,8 @@ Controller::~Controller() {
 }
 
 void Controller::process_input(uint32_t elapsed_ms) {
+    static bool aids = true;
+
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
@@ -20,6 +22,10 @@ void Controller::process_input(uint32_t elapsed_ms) {
                 running = false;
             if (event.key.keysym.scancode == SDL_SCANCODE_F)
                 model.debug = true;
+            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                model.load_map(aids ? "5flr.map" : "4flr.map");
+                aids = !aids;
+            }
             break;
 
         default:

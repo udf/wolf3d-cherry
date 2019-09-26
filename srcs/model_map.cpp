@@ -142,6 +142,7 @@ void Model::load_map(std::string filename) {
         row.resize(map_w);
     }
 
+    sprites.clear();
     // parse optional data from cells
     for (size_t x = 0; x < map_w; x++) {
         for (size_t y = 0; y < map_h; y++) {
@@ -164,6 +165,7 @@ void Model::load_map(std::string filename) {
         }
     }
 
+    map.clear();
     for (auto &row : tmp_map) {
         for (auto &item : row) {
             map.push_back(item.cell);
