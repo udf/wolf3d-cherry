@@ -15,9 +15,9 @@ View::View() {
         "wolf3d",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        static_cast<int>(width),
-        static_cast<int>(height),
-        SDL_WINDOW_SHOWN
+        static_cast<int>(1280),
+        static_cast<int>(1024),
+        SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN
     );
     if (!window) {
         throw Exception("Failed to create SDL window")
@@ -280,7 +280,8 @@ void View::draw(const Model &m) {
     draw_sprites(m, pixels);
 
     SDL_UnlockTexture(buffer);
-    SDL_RenderCopy(renderer, buffer, NULL, NULL);
+    const SDL_Rect dst = {0, 0, 1280, 840};
+    SDL_RenderCopy(renderer, buffer, NULL, &dst);
 
     // draw_overlay(m);
 
