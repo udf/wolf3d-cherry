@@ -5,7 +5,7 @@
 int main(int ac, char **av) {
     try {
         Controller controller;
-        controller.model.load_map(ac == 2 ? av[1] : "test.map");
+        controller.model.load_map("4flr.map");
         controller.run();
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
