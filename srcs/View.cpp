@@ -118,7 +118,7 @@ void View::draw_overlay(const Model &m) {
         auto x2,
         auto y2
     ) {
-        if (tex->has_alpha) {
+        if (!tex->is_solid) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
         } else {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);

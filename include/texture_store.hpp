@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <set>
 
 #include <SDL2/SDL_image.h>
 
@@ -71,6 +72,7 @@ struct Texture {
     std::string short_name;
     std::unique_ptr<bool[]> col_has_alpha;
     bool has_alpha;
+    bool is_solid = true;
 
     Texture(const std::string &short_name, SDL_Surface *surface);
 
@@ -93,6 +95,7 @@ class TextureStore {
     std::unordered_map<std::string, Texture> textures;
 
     static const std::unordered_map<std::string, std::string> filename_mapping;
+    static const std::set<std::string> non_solids;
     const std::string texture_path = "assets/textures/";
 
   public:

@@ -80,7 +80,8 @@ struct Model {
     static const size_t max_casts = 4;
     auto cast_ray(
         const Model::Coord ray_dir,
-        size_t num_casts = max_casts
+        size_t num_casts = max_casts,
+        bool collision = false
     ) const -> std::array<RayHit, max_casts>;
 
     struct Player {

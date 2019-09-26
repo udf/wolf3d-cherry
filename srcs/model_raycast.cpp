@@ -2,7 +2,8 @@
 
 auto Model::cast_ray(
     const Model::Coord ray_dir,
-    size_t num_casts
+    size_t num_casts,
+    bool collision
 ) const -> std::array<RayHit, max_casts> {
     num_casts = std::min(num_casts, max_casts);
 
@@ -65,13 +66,18 @@ auto Model::cast_ray(
             hit.is_ns = true;
         }
 
-        auto check_cell = [this, &hit](
+        auto check_cell = [this, collision, &hit](
             bool is_near, ssize_t x, ssize_t y, const Texture *Cell::* tex_member
         ) {
             if (hit.tex)
                 return;
             auto cell = get_cell(x, y);
             if (cell) {
+                auto tex = cell->*tex_member;
+                if (!tex)
+                    return;
+                if (collision && !tex->is_solid)
+                    return;
                 hit.tex = cell->*tex_member;
                 hit.cell = cell;
                 hit.is_near = is_near;

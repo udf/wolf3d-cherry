@@ -55,6 +55,10 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"GG", "waifu.png"}
 };
 
+const decltype(TextureStore::non_solids) TextureStore::non_solids {
+    "D2"
+};
+
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
     auto pixels = static_cast<uint8_t *>(surface->pixels);
     auto pixel = &pixels[i * surface->format->BytesPerPixel];
@@ -101,6 +105,9 @@ Texture TextureStore::load_texture(const std::string &short_name) {
             .set_hint(IMG_GetError());
 
     auto texture = Texture(short_name, surface);
+    if (non_solids.find(short_name) != non_solids.end()) {
+        texture.is_solid = false;
+    }
     SDL_FreeSurface(surface);
     return texture;
 }
