@@ -42,9 +42,6 @@ struct Cell {
     const Texture *wall_bottom = nullptr;
     const Texture *wall_left = nullptr;
     const Texture *wall_right = nullptr;
-
-    const Texture *top;
-    float height = 1;
 };
 
 struct Sprite { // btw i prefer coke

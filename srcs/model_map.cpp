@@ -77,7 +77,7 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
         auto tokens = get_n_tokens<3>(lines[0]);
         c.cell.ceil = texture_store.get(tokens[0].val);
         c.cell.wall_top = texture_store.get(tokens[1].val);
-        c.cell.top = texture_store.get(tokens[2].val);
+        // tokens[2] unused
 
         tokens = get_n_tokens<3>(lines[1]);
         c.cell.wall_left = texture_store.get(tokens[0].val);
@@ -109,12 +109,7 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
         tokens = get_n_tokens<3>(lines[2]);
         c.cell.floor = texture_store.get(tokens[0].val);
         c.cell.wall_bottom = texture_store.get(tokens[1].val);
-        std::istringstream ss(tokens[2].val);
-        int height;
-        if (!(ss >> std::hex >> height)) {
-            height = 256;
-        }
-        c.cell.height = (float)height / 256;
+        // tokens[2] unused
     }
 
     return cells;
