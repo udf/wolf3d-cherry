@@ -51,6 +51,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"S2", "Sprites/Red_BB.png"},
     {"S6", "Sprites/Blue_BB.png"},
     {"S3", "Sprites/Blue2_BB.png"},
+    //{"S4", "Sprites/Yellow_BB.png"},
     {"S4", "Sprites/Yellow2_BB.png"},
     {"S5", "Sprites/Stool.png"},
     {"GG", "waifu.png"}
