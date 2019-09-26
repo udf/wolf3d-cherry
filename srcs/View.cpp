@@ -230,16 +230,7 @@ void View::draw(const Model &m) {
         float camX = fmapf((float)(x + 1), 1, (float)width, 1.f, -1.f);
         const Model::Coord ray_dir = m.player.rot_vec + m.cam_rot_vec * camX;
         auto hits = m.cast_ray(ray_dir);
-        for (int i = (int)hits.size(); i >= 0; i--) {
-
-            if (i == hits.size())
-            {
-
-                for (uint32_t y = 0; y < height; y++) {
-                    *texel(pixels, width, x, y) = 0xfffffccc;
-                }
-                continue;
-            }
+        for (int i = (int)hits.size() - 1; i >= 0; i--) {
             auto &hit = hits[i];
             if (!hit.tex)
                 continue;
