@@ -158,9 +158,6 @@ void Model::load_map(std::string filename) {
                 auto &sprite = sprites.back();
                 sprite.pos.x = static_cast<float>(x) + 0.5f;
                 sprite.pos.y = static_cast<float>(y) + 0.5f;
-                std::cout << "DBG: added sprite: " << sprite.tex->short_name;
-                std::cout << " p(" << sprite.pos.x << " " << sprite.pos.y << ")";
-                std::cout << " s(" << sprite.scale.x << " " << sprite.scale.y << ")" << std::endl;
             }
         }
     }
