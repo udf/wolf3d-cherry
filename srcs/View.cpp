@@ -175,6 +175,42 @@ void View::draw_overlay(const Model &m) {
     }
 }
 
+void View::draw_sprites(const Model &m, uint32_t *pixels) {
+    const float inv_det = 1.0f / (m.cam_rot_vec.x * m.player.rot_vec.y - m.player.rot_vec.x * m.cam_rot_vec.y);
+
+    for (auto &sprite : m.sprites) {
+        Model::Coord pos = sprite.pos - m.player.pos;
+        Model::Coord transform;
+        transform.x = -inv_det * (m.player.rot_vec.y * pos.x - m.player.rot_vec.x * pos.y);
+        transform.y = inv_det * (-m.cam_rot_vec.y * pos.x + m.cam_rot_vec.x * pos.y);
+
+        if (transform.y <= 0)
+            continue;
+
+        float sprite_h = std::abs(height / transform.y);
+        ssize_t y_start = (ssize_t)std::max(0.f, -sprite_h / 2.f + height / 2.f);
+        ssize_t y_end = (ssize_t)std::min((float)height, sprite_h / 2.f + height / 2.f);
+
+        float sprite_w = std::abs(height / transform.y);
+        float screen_x = (width / 2.f) * (1 + transform.x / transform.y);
+        ssize_t x_start = (ssize_t)std::max(0.f, -sprite_w / 2.f + screen_x);
+        ssize_t x_end = (ssize_t)std::min((float)width, sprite_w / 2.f + screen_x);
+
+        for (ssize_t x = x_start; x < x_end; x++) {
+            const ssize_t tx = (ssize_t)(((float)x - (-sprite_w / 2 + screen_x)) * (float)sprite.tex->w / sprite_w);
+            for (ssize_t y = y_start; y < y_end; y++) {
+                const float d = (float)y - height / 2.f + sprite_h / 2.f;
+                const ssize_t ty = (ssize_t)((d * (float)sprite.tex->h) / sprite_h);
+                auto p = sprite.tex->get(tx, ty);
+                if (!p.a || transform.y >= z_buf[x][y])
+                    continue;
+                *texel(pixels, width, x, y) = p.get_int();
+                z_buf[x][y] = transform.y;
+            }
+        }
+    }
+}
+
 void View::draw(const Model &m) {
     uint32_t *pixels;
     int pitch;
@@ -241,10 +277,12 @@ void View::draw(const Model &m) {
         }
     }
 
+    draw_sprites(m, pixels);
+
     SDL_UnlockTexture(buffer);
     SDL_RenderCopy(renderer, buffer, NULL, NULL);
 
-    //draw_overlay(m);
+    // draw_overlay(m);
 
     uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
 

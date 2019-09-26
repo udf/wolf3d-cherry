@@ -23,6 +23,7 @@ class View {
 
     void draw_text(const char *text, int x, int y);
     void draw_overlay(const Model &model);
+    void draw_sprites(const Model &m, u_int32_t *pixels);
 
     static const uint32_t width = 960;
     static const uint32_t height = 630;
