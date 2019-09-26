@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gpiozero import Button
 from signal import pause
 from time import sleep
@@ -7,7 +9,7 @@ keyboard = Controller()
 
 pins = {
         'A': {"pin": 2, "key": Key.shift},
-        'B': {"pin": 4, "key": 'x'},
+        'B': {"pin": 4, "key": Key.enter},
         'Start': {"pin": 3, "key": Key.esc},
         'R': {"pin": 6, "key": Key.right},
         'L': {"pin": 0, "key": Key.left},
