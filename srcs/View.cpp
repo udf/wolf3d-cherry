@@ -293,9 +293,9 @@ void View::draw(const Model &m) {
 
     char buffer[6];
     uint32_t game_elapsed_s = (SDL_GetTicks() - m.game_start_ms) / 1000;
-    int rem_s = std::max(0, 60 - (int)game_elapsed_s);
+    int rem_s = std::max(0, 120 - (int)game_elapsed_s);
     snprintf(buffer, 6, "%02d:%02d", rem_s / 60, rem_s % 60);
-    draw_text2(buffer, 1280 - 76 - 10, 5);
+    draw_text2(buffer, 1280 - 76 - 20, 15);
 
     // uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
     // std::stringstream ss;
