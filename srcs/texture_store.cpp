@@ -59,6 +59,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
 };
 
 const decltype(TextureStore::non_solids) TextureStore::non_solids {
+    "D2",
     "H8",
     "H9"
 };
