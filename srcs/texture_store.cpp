@@ -52,11 +52,16 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"S3", "Sprites/Blue_BB.png"},
     {"S4", "Sprites/Yellow_BB.png"},
     {"S5", "Sprites/Stool.png"},
+    {"S6", "Sprites/Pen.png"},
+    {"S7", "Sprites/Lanyard.png"},
+    {"S8", "Sprites/Band.png"},
     {"GG", "waifu.png"}
 };
 
 const decltype(TextureStore::non_solids) TextureStore::non_solids {
-    "D2"
+    "D2",
+    "H8",
+    "H9"
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
