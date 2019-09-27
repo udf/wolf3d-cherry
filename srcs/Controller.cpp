@@ -5,7 +5,6 @@ const decltype(Controller::map_shortnames) Controller::map_shortnames{
     {"T2", "5flr.map"},
 };
 
-
 Controller::Controller() {
 }
 
@@ -37,15 +36,15 @@ void Controller::process_input(uint32_t elapsed_ms) {
         }
     }
 
-    if (do_map_load) {
-        auto cell = model.get_cell(
-            (ssize_t)model.player.pos.x,
-            (ssize_t)model.player.pos.y
-        );
-        if (cell != nullptr && cell->tp_name != "") {
-            const auto &map = map_shortnames.at(cell->tp_name);
-            model.load_map(map);
-        }
+    auto cell = model.get_cell(
+        (ssize_t)model.player.pos.x,
+        (ssize_t)model.player.pos.y
+    );
+    bool can_warp = cell != nullptr && cell->tp_name != "";
+    model.hint = can_warp ? "Press action to warp!" : nullptr;
+    if (do_map_load && can_warp) {
+        const auto &map = map_shortnames.at(cell->tp_name);
+        model.load_map(map);
     }
 
     const uint8_t *state = SDL_GetKeyboardState(NULL);

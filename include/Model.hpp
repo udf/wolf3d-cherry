@@ -106,6 +106,8 @@ struct Model {
     uint32_t fps = 0;
     uint32_t frame_start_ms = 0;
 
+    const char *hint = nullptr;
+
   private:
     Model(const Model &other) = delete;
     Model &operator=(const Model &other) = delete;

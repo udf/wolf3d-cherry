@@ -293,6 +293,8 @@ void View::draw(const Model &m) {
     // ss.str("");
     // ss << "frame time: " << frame_time << " ms";
     // draw_text(ss.str().c_str(), 5, 25);
+    if (m.hint)
+        draw_text(m.hint, 5, 5);
 
     SDL_RenderPresent(renderer);
 }
