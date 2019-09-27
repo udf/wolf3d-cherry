@@ -22,7 +22,7 @@ class View {
     View &operator=(const View &other) = delete;
 
     void draw_text(const char *text, int x, int y, SDL_Color col);
-    void draw_text2(const char *text, int x, int y);
+    void draw_text2(const char *text, int x, int y, SDL_Color col = {255, 255, 255, 0});
     void draw_overlay(const Model &model);
     void draw_sprites(const Model &m, u_int32_t *pixels);
 
