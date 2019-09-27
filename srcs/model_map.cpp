@@ -19,6 +19,12 @@ const decltype(Model::sprite_scales) Model::sprite_scales{
     // TODO
 };
 
+const decltype(Model::collectables) Model::collectables{
+    {"S6", "A Pen"},
+    {"S7", "A Lanyard"},
+    {"S8", "A Band"},
+};
+
 template<size_t N>
 static std::array<MapLine, N> get_n_lines(
     std::istream &s,
@@ -101,6 +107,11 @@ std::vector<ParsedCell> Model::parse_lines(std::array<MapLine, 3> &lines) {
                 try {
                     sprite.scale = sprite_scales.at(sprite_tex->short_name);
                 } catch (std::out_of_range &e) {
+                }
+                auto it = collectables.find(sprite_tex->short_name);
+                if (it != collectables.end()) {
+                    sprite.collectable = true;
+                    sprite.collected_hint = it->second;
                 }
                 c.sprite = sprite;
             }
