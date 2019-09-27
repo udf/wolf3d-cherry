@@ -103,7 +103,8 @@ void Controller::process_input(uint32_t elapsed_ms) {
         if (!sprite.collectable || !sprite.tex->is_solid)
             continue;
         auto dist = comp_euc_dist(model.player.pos, sprite.pos);
-        if (dist >= 0.3f) // this distance is as arbitrary as our existence
+        std::cout << sprite.collected_hint << " " << dist << std::endl;
+        if (dist >= 0.2f) // this distance is as arbitrary as our existence
             continue;
         // hey kids, i heard you like undefined behaviour
         auto tex = const_cast<Texture *>(sprite.tex);
