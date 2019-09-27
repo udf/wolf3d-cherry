@@ -186,6 +186,8 @@ void View::draw_sprites(const Model &m, uint32_t *pixels) {
     const float inv_det = 1.0f / (m.cam_rot_vec.x * m.player.rot_vec.y - m.player.rot_vec.x * m.cam_rot_vec.y);
 
     for (auto &sprite : m.sprites) {
+        if (!sprite.tex->is_solid)
+            continue;
         Model::Coord pos = sprite.pos - m.player.pos;
         Model::Coord transform;
         transform.x = -inv_det * (m.player.rot_vec.y * pos.x - m.player.rot_vec.x * pos.y);
@@ -310,6 +312,16 @@ void View::draw(const Model &m) {
     // ss << "frame time: " << frame_time << " ms";
     // draw_text(ss.str().c_str(), 5, 25);
     draw_text2(m.hint, 10, 15);
+
+    int y = 360;
+    const int line_h = 30;
+    if (!m.collectable_hints.empty()) {
+        draw_text2("You have won:", 10, y);
+    }
+    for (auto &str : m.collectable_hints) {
+        y += line_h;
+        draw_text2(str.c_str(), 10, y);
+    }
 
     SDL_RenderPresent(renderer);
 }

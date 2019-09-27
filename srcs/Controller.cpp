@@ -98,6 +98,18 @@ void Controller::process_input(uint32_t elapsed_ms) {
         }
     }
     model.player.pos = new_pos;
+
+    for (auto &sprite : model.sprites) {
+        if (!sprite.collectable || !sprite.tex->is_solid)
+            continue;
+        auto dist = comp_euc_dist(model.player.pos, sprite.pos);
+        if (dist >= 0.3f) // this distance is as arbitrary as our existence
+            continue;
+        // hey kids, i heard you like undefined behaviour
+        auto tex = const_cast<Texture *>(sprite.tex);
+        tex->is_solid = false;
+        model.collectable_hints.push_back(sprite.collected_hint);
+    }
 }
 
 void Controller::calculate_fps() {

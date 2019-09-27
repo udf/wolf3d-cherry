@@ -51,6 +51,8 @@ struct Sprite { // btw i prefer coke
 
     Point<float> pos = {0, 0};
     Point<float> scale = {1, 1};
+    bool collectable = false;
+    const char *collected_hint = nullptr;
 };
 
 struct ParsedCell {
@@ -99,6 +101,7 @@ struct Model {
 
     static const std::unordered_map<char, float> cardinal_angles;
     static const std::unordered_map<std::string, Coord> sprite_scales;
+    static const std::unordered_map<std::string, const char*> collectables;
 
     size_t map_w = 0;
     size_t map_h = 0;
@@ -109,6 +112,8 @@ struct Model {
 
     const char *hint = nullptr;
     uint32_t game_start_ms;
+
+    std::vector<std::string> collectable_hints;
 
   private:
     Model(const Model &other) = delete;
