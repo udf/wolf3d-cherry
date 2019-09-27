@@ -82,9 +82,9 @@ void View::draw_text(const char *text, int x, int y, SDL_Color col) {
     SDL_DestroyTexture(font_tex);
 }
 
-void View::draw_text2(const char *text, int x, int y) {
+void View::draw_text2(const char *text, int x, int y, SDL_Color col) {
     draw_text(text, x + 1, y + 1, {0, 0, 0, 0});
-    draw_text(text, x, y, {255, 255, 255, 0});
+    draw_text(text, x, y, col);
 }
 
 void View::draw_overlay(const Model &m) {
@@ -293,9 +293,12 @@ void View::draw(const Model &m) {
 
     char buffer[6];
     uint32_t game_elapsed_s = (SDL_GetTicks() - m.game_start_ms) / 1000;
-    int rem_s = std::max(0, 60 - (int)game_elapsed_s);
+    int rem_s = std::max(0, 90 - (int)game_elapsed_s);
     snprintf(buffer, 6, "%02d:%02d", rem_s / 60, rem_s % 60);
-    draw_text2(buffer, 1280 - 76 - 10, 5);
+    SDL_Color col = {255, 255, 255, 0};
+    if (rem_s == 0)
+        col = {255, 70, 70, 0};
+    draw_text2(buffer, 1280 - 76 - 20, 15, col);
 
     // uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
     // std::stringstream ss;
