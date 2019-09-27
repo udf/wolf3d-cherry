@@ -286,14 +286,13 @@ void View::draw(const Model &m) {
 
     // draw_overlay(m);
 
-    uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
-
-    std::stringstream ss;
-    ss << "fps: " << m.fps;
-    draw_text(ss.str().c_str(), 5, 5);
-    ss.str("");
-    ss << "frame time: " << frame_time << " ms";
-    draw_text(ss.str().c_str(), 5, 25);
+    // uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
+    // std::stringstream ss;
+    // ss << "fps: " << m.fps;
+    // draw_text(ss.str().c_str(), 5, 5);
+    // ss.str("");
+    // ss << "frame time: " << frame_time << " ms";
+    // draw_text(ss.str().c_str(), 5, 25);
 
     SDL_RenderPresent(renderer);
 }
