@@ -296,10 +296,9 @@ void View::draw(const Model &m) {
     // draw_overlay(m);
 
     int y = 15;
-    char buffer[6];
-    uint32_t game_elapsed_s = (SDL_GetTicks() - m.game_start_ms) / 1000;
-    int rem_s = std::max(0, 120 - (int)game_elapsed_s);
-    snprintf(buffer, 6, "%02d:%02d", rem_s / 60, rem_s % 60);
+    char buffer[9];
+    int rem_s = m.timer_ms / 1000;
+    snprintf(buffer, 9, "%02d:%02d", rem_s / 60, rem_s % 60);
     SDL_Color col = {255, 255, 255, 0};
     if (rem_s == 0)
         col = {255, 70, 70, 0};

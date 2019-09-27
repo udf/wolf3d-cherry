@@ -67,9 +67,11 @@ void Controller::process_input(uint32_t elapsed_ms) {
     Model::Coord move_vec = {0, 0};
     if (state[SDL_SCANCODE_UP]) {
         move_vec += model.player.rot_vec;
+        model.has_moved = true;
     }
     if (state[SDL_SCANCODE_DOWN]) {
         move_vec -= model.player.rot_vec;
+        model.has_moved = true;
     }
     auto new_pos = model.player.pos + move_vec * move_thrust;
     auto hit = model.cast_ray(move_vec, 1, true)[0];
@@ -134,6 +136,8 @@ void Controller::run() {
     model.frame_start_ms = SDL_GetTicks();
     while (running) {
         uint32_t elapsed_ms = SDL_GetTicks() - model.frame_start_ms;
+        if (model.has_moved)
+            model.timer_ms = std::max(0, (int32_t)model.timer_ms - (int32_t)elapsed_ms);
         model.frame_start_ms = SDL_GetTicks();
 
         model.debug = false;
