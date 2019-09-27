@@ -69,17 +69,22 @@ View::~View() {
 }
 
 
-void View::draw_text(const char *text, int x, int y) {
+void View::draw_text(const char *text, int x, int y, SDL_Color col) {
     auto font_surface = TTF_RenderText_Solid(
         font,
         text,
-        {255, 255, 255, 0}
+        col
     );
     SDL_Rect src_rect = {x, y, font_surface->w, font_surface->h};
     auto font_tex = SDL_CreateTextureFromSurface(renderer, font_surface);
     SDL_FreeSurface(font_surface);
     SDL_RenderCopy(renderer, font_tex, NULL, &src_rect);
     SDL_DestroyTexture(font_tex);
+}
+
+void View::draw_text2(const char *text, int x, int y) {
+    draw_text(text, x + 1, y + 1, {0, 0, 0, 0});
+    draw_text(text, x, y, {255, 255, 255, 0});
 }
 
 void View::draw_overlay(const Model &m) {
@@ -286,6 +291,12 @@ void View::draw(const Model &m) {
 
     // draw_overlay(m);
 
+    char buffer[6];
+    uint32_t game_elapsed_s = (SDL_GetTicks() - m.game_start_ms) / 1000;
+    int rem_s = std::max(0, 60 - (int)game_elapsed_s);
+    snprintf(buffer, 6, "%02d:%02d", rem_s / 60, rem_s % 60);
+    draw_text2(buffer, 1280 - 76 - 10, 5);
+
     // uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
     // std::stringstream ss;
     // ss << "fps: " << m.fps;
@@ -294,7 +305,7 @@ void View::draw(const Model &m) {
     // ss << "frame time: " << frame_time << " ms";
     // draw_text(ss.str().c_str(), 5, 25);
     if (m.hint)
-        draw_text(m.hint, 5, 5);
+        draw_text2(m.hint, 5, 5);
 
     SDL_RenderPresent(renderer);
 }

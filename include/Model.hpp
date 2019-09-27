@@ -73,6 +73,7 @@ struct Model {
     };
 
     Model() {
+        game_start_ms = SDL_GetTicks();
     }
 
     void load_map(std::string filename);
@@ -107,6 +108,7 @@ struct Model {
     uint32_t frame_start_ms = 0;
 
     const char *hint = nullptr;
+    uint32_t game_start_ms;
 
   private:
     Model(const Model &other) = delete;
