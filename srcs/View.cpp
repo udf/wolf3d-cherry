@@ -295,6 +295,7 @@ void View::draw(const Model &m) {
 
     // draw_overlay(m);
 
+    int y = 15;
     char buffer[6];
     uint32_t game_elapsed_s = (SDL_GetTicks() - m.game_start_ms) / 1000;
     int rem_s = std::max(0, 120 - (int)game_elapsed_s);
@@ -302,25 +303,19 @@ void View::draw(const Model &m) {
     SDL_Color col = {255, 255, 255, 0};
     if (rem_s == 0)
         col = {255, 70, 70, 0};
-    draw_text2(buffer, 1280 - 76 - 20, 15, col);
+    draw_text2(buffer, 1280 - 76 - 20, y, col);
 
-    // uint32_t frame_time = SDL_GetTicks() - m.frame_start_ms;
-    // std::stringstream ss;
-    // ss << "fps: " << m.fps;
-    // draw_text(ss.str().c_str(), 5, 5);
-    // ss.str("");
-    // ss << "frame time: " << frame_time << " ms";
-    // draw_text(ss.str().c_str(), 5, 25);
-    draw_text2(m.hint, 10, 15);
+    draw_text2(m.hint, 10, y);
 
-    int y = 360;
+    y = 360;
     const int line_h = 30;
+    col = {120, 255, 120, 0};
     if (!m.collectable_hints.empty()) {
-        draw_text2("You have won:", 10, y);
+        draw_text2("You have won:", 10, y, col);
     }
     for (auto &str : m.collectable_hints) {
         y += line_h;
-        draw_text2(str.c_str(), 10, y);
+        draw_text2(str.c_str(), 10, y, col);
     }
 
     SDL_RenderPresent(renderer);
