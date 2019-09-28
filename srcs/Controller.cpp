@@ -143,6 +143,8 @@ void Controller::run() {
         if (model.has_moved) {
             if (model.timer_ms != 0 && model.timer_ms < elapsed_ms) {
                 for (auto &sprite : model.sprites) {
+                    if(!sprite.collectable)
+                        continue;
                     const_cast<Texture *>(sprite.tex)->is_solid = false;
                 }
             }
