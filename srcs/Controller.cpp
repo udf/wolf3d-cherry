@@ -111,6 +111,9 @@ void Controller::process_input(uint32_t elapsed_ms) {
         auto tex = const_cast<Texture *>(sprite.tex);
         tex->is_solid = false;
         model.collectable_hints.push_back(sprite.collected_hint);
+        if (model.collectable_hints.size() == 3) {
+            model.collectable_hints.push_back("And a shirt!");
+        }
     }
 }
 
@@ -136,8 +139,14 @@ void Controller::run() {
     model.frame_start_ms = SDL_GetTicks();
     while (running) {
         uint32_t elapsed_ms = SDL_GetTicks() - model.frame_start_ms;
-        if (model.has_moved)
+        if (model.has_moved) {
+            if (model.timer_ms != 0 && model.timer_ms < elapsed_ms) {
+                for (auto &sprite : model.sprites) {
+                    const_cast<Texture *>(sprite.tex)->is_solid = false;
+                }
+            }
             model.timer_ms = std::max(0, (int32_t)model.timer_ms - (int32_t)elapsed_ms);
+        }
         model.frame_start_ms = SDL_GetTicks();
 
         model.debug = false;
