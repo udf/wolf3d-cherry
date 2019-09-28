@@ -109,6 +109,7 @@ void Controller::process_input(uint32_t elapsed_ms) {
             continue;
         // hey kids, i heard you like undefined behaviour
         auto tex = const_cast<Texture *>(sprite.tex);
+        model.timer_ms += model.collect_time_bonus;
         tex->is_solid = false;
         model.collectable_hints.push_back(sprite.collected_hint);
         if (model.collectable_hints.size() == 3) {

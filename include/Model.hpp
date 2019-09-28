@@ -113,8 +113,9 @@ struct Model {
 
     std::vector<std::string> collectable_hints;
 
+    const static uint32_t collect_time_bonus = 1000 * 30;
     bool has_moved = false;
-    uint32_t timer_ms = 1000 * 120;
+    uint32_t timer_ms = 1000 * 60;
 
   private:
     Model(const Model &other) = delete;
