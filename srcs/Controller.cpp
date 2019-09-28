@@ -136,8 +136,14 @@ void Controller::run() {
     model.frame_start_ms = SDL_GetTicks();
     while (running) {
         uint32_t elapsed_ms = SDL_GetTicks() - model.frame_start_ms;
-        if (model.has_moved)
+        if (model.has_moved) {
+            if (model.timer_ms != 0 && model.timer_ms < elapsed_ms) {
+                for (auto &sprite : model.sprites) {
+                    const_cast<Texture *>(sprite.tex)->is_solid = false;
+                }
+            }
             model.timer_ms = std::max(0, (int32_t)model.timer_ms - (int32_t)elapsed_ms);
+        }
         model.frame_start_ms = SDL_GetTicks();
 
         model.debug = false;
