@@ -111,6 +111,9 @@ void Controller::process_input(uint32_t elapsed_ms) {
         auto tex = const_cast<Texture *>(sprite.tex);
         tex->is_solid = false;
         model.collectable_hints.push_back(sprite.collected_hint);
+        if (model.collectable_hints.size() == 3) {
+            model.collectable_hints.push_back("And a shirt!");
+        }
     }
 }
 
