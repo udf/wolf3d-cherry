@@ -97,6 +97,7 @@ struct Model {
     Player player;
     Coord cam_rot_vec;
     std::vector<Sprite> sprites;
+    TextureStore texture_store;
 
     static const std::unordered_map<char, float> cardinal_angles;
     static const std::unordered_map<std::string, Coord> sprite_scales;
@@ -106,13 +107,12 @@ struct Model {
     size_t map_h = 0;
 
     bool debug;
+
     uint32_t fps = 0;
     uint32_t frame_start_ms = 0;
 
     const char *hint = nullptr;
-
     std::vector<std::string> collectable_hints;
-
     const static uint32_t collect_time_bonus = 1000 * 30;
     bool has_moved = false;
     uint32_t timer_ms = 1000 * 60;
@@ -123,6 +123,5 @@ struct Model {
 
     std::vector<ParsedCell> parse_lines(std::array<MapLine, 3> &lines);
 
-    TextureStore texture_store;
     std::vector<Cell> map;
 };
