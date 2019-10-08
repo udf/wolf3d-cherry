@@ -11,13 +11,17 @@ View::View() {
             .set_hint(SDL_GetError());
     }
 
+    Uint32 flags = SDL_WINDOW_SHOWN;
+    #ifdef __arm__
+        flags |= SDL_WINDOW_FULLSCREEN;
+    #endif
     window = SDL_CreateWindow(
         "wolf3d",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         static_cast<int>(1280),
         static_cast<int>(1024),
-        SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN
+        flags
     );
     if (!window) {
         throw Exception("Failed to create SDL window")
