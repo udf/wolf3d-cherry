@@ -26,13 +26,13 @@ SRC_DIR=./srcs/
 BUILD_DIR=./build/
 
 # Files that have a matching .cpp and .hpp
-FILESTEMS=util View Controller exception texture_store
+FILESTEMS=View Controller exception texture_store
 
 # Plain source files
 SRC_FILES=$(FILESTEMS) model_map model_raycast main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) Model Point
+INCLUDE_FILES=$(FILESTEMS) util Model Point
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))
