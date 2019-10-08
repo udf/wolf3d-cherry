@@ -264,7 +264,7 @@ void View::draw(const Model &m) {
                     *texel(pixels, width, x, y) = cell->ceil->get_uint((int)(tx * (float)(cell->ceil->w)), (int)(ty * (float)(cell->ceil->h)));
                 if (cell->floor) {
                     Pixel p = cell->floor->get((int)(tx * (float)(cell->floor->w)), (int)(ty * (float)(cell->floor->h)));
-                    *texel(pixels, width, x, height - y - 2) = p.get_int();
+                    *texel(pixels, width, x, height - y - 1) = p.get_int();
                 }
             }
             
