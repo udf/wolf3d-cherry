@@ -11,6 +11,7 @@ const decltype(TextureStore::filename_mapping) TextureStore::filename_mapping{
     {"W6", "walls/Wood.png"},
     {"W7", "walls/MEME1.png"},
     {"W8", "walls/MEME2.png"},
+    {"W9", "walls/DarkBricksTop.png"},
     {"V1", "windows/Window1.png"},
     {"V2", "windows/CoveredWindow1.png"},
     {"V3", "windows/Window2.png"},
@@ -73,6 +74,7 @@ const decltype(TextureStore::non_solids) TextureStore::non_solids {
     "H8",
     "H9",
     "G2",
+	"W9"
 };
 
 static Pixel surface_get_pixel(SDL_Surface *surface, size_t i) {
