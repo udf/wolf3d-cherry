@@ -25,6 +25,7 @@ class View {
     void draw_text2(const char *text, int x, int y, SDL_Color col = {255, 255, 255, 0});
     void draw_overlay(const Model &model);
     void draw_sprites(const Model &m, u_int32_t *pixels);
+    void draw_sprite(uint32_t *pixels, const Sprite &sprite, Model::Coord center, float dist);
 
     static const uint32_t width = 960;
     static const uint32_t height = 630;

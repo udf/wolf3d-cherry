@@ -186,6 +186,34 @@ void View::draw_overlay(const Model &m) {
     }
 }
 
+void View::draw_sprite(uint32_t *pixels, const Sprite &sprite, Model::Coord center, float dist) {
+    const float size = std::abs(height / dist);
+
+    const float x_start = center.x - (size - 1) / 2;
+    const float x_end = center.x + (size - 1) / 2;
+    const ssize_t x_end_clipped = (ssize_t)std::min((float)(width - 1), x_end);
+
+    const float y_start = center.y - (size - 1) / 2;
+    const float y_end = center.y + (size - 1) / 2;
+    const ssize_t y_end_clipped = (ssize_t)std::min((float)(height - 1), y_end);
+
+    for (ssize_t x = (ssize_t)std::max(0.f, x_start); x <= x_end_clipped; x++) {
+        const ssize_t tx = (ssize_t)fmapf((float)x, x_start, x_end, 0, (float)(sprite.tex->w - 1));
+        if (tx < 0)
+            continue;
+        for (ssize_t y = (ssize_t)std::max(0.f, y_start); y < y_end_clipped; y++) {
+            const ssize_t ty = (ssize_t)fmapf((float)y, y_start, y_end, 0, (float)(sprite.tex->h - 1));
+            if (ty < 0)
+                continue;
+            auto p = sprite.tex->get(tx, ty);
+            if (!p.a || dist >= z_buf[x][y])
+                continue;
+            *texel(pixels, width, x, y) = p.get_int();
+            z_buf[x][y] = dist;
+        }
+    }
+}
+
 void View::draw_sprites(const Model &m, uint32_t *pixels) {
     const float inv_det = 1.0f / (m.cam_rot_vec.x * m.player.rot_vec.y - m.player.rot_vec.x * m.cam_rot_vec.y);
 
@@ -200,27 +228,8 @@ void View::draw_sprites(const Model &m, uint32_t *pixels) {
         if (transform.y <= 0)
             continue;
 
-        float sprite_h = std::abs(height / transform.y);
-        ssize_t y_start = (ssize_t)std::max(0.f, -sprite_h / 2.f + height / 2.f);
-        ssize_t y_end = (ssize_t)std::min((float)height, sprite_h / 2.f + height / 2.f);
-
-        float sprite_w = std::abs(height / transform.y);
         float screen_x = (width / 2.f) * (1 + transform.x / transform.y);
-        ssize_t x_start = (ssize_t)std::max(0.f, -sprite_w / 2.f + screen_x);
-        ssize_t x_end = (ssize_t)std::min((float)width, sprite_w / 2.f + screen_x);
-
-        for (ssize_t x = x_start; x < x_end; x++) {
-            const ssize_t tx = (ssize_t)(((float)x - (-sprite_w / 2 + screen_x)) * (float)sprite.tex->w / sprite_w);
-            for (ssize_t y = y_start; y < y_end; y++) {
-                const float d = (float)y - height / 2.f + sprite_h / 2.f;
-                const ssize_t ty = (ssize_t)((d * (float)sprite.tex->h) / sprite_h);
-                auto p = sprite.tex->get(tx, ty);
-                if (!p.a || transform.y >= z_buf[x][y])
-                    continue;
-                *texel(pixels, width, x, y) = p.get_int();
-                z_buf[x][y] = transform.y;
-            }
-        }
+        draw_sprite(pixels, sprite, {screen_x, height / 2.f}, transform.y);
     }
 }
 
@@ -272,7 +281,7 @@ void View::draw(const Model &m) {
                 for (; y < y_end && y < (ssize_t)height; y++) {
                     float tx = hit.is_ns ? (ray_dir.y < 0 ? frac(hit.pos.x) : 1 - frac(hit.pos.x)) :  (ray_dir.x > 0 ? frac(hit.pos.y) : 1 - frac(hit.pos.y));
                     float ty = (float)(y - y_start) / (float)(y_end - y_start);
-                    auto p = hit.tex->get((int)(tx * (float)hit.tex->w), (int)(ty * (float)hit.tex->h));
+                    auto p = hit.tex->get((int)(tx * (float)(hit.tex->w - 1)), (int)(ty * (float)(hit.tex->h - 1)));
 
                     if (p.a) {
                         if (ty <= 0.3f) {
