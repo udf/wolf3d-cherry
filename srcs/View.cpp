@@ -197,14 +197,10 @@ void View::draw_sprite(uint32_t *pixels, const Sprite &sprite, Model::Coord cent
     const float y_end = center.y + (size - 1) / 2;
     const ssize_t y_end_clipped = (ssize_t)std::min((float)(height - 1), y_end);
 
-    for (ssize_t x = (ssize_t)std::max(0.f, x_start); x <= x_end_clipped; x++) {
+    for (ssize_t x = (ssize_t)std::max(0.f, ceilf(x_start)); x <= x_end_clipped; x++) {
         const ssize_t tx = (ssize_t)fmapf((float)x, x_start, x_end, 0, (float)(sprite.tex->w - 1));
-        if (tx < 0)
-            continue;
-        for (ssize_t y = (ssize_t)std::max(0.f, y_start); y < y_end_clipped; y++) {
+        for (ssize_t y = (ssize_t)std::max(0.f, ceilf(y_start)); y < y_end_clipped; y++) {
             const ssize_t ty = (ssize_t)fmapf((float)y, y_start, y_end, 0, (float)(sprite.tex->h - 1));
-            if (ty < 0)
-                continue;
             auto p = sprite.tex->get(tx, ty);
             if (!p.a || dist >= z_buf[x][y])
                 continue;
